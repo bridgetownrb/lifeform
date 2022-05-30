@@ -5,8 +5,8 @@ require_relative "lib/lifeform/version"
 Gem::Specification.new do |spec|
   spec.name = "lifeform"
   spec.version = Lifeform::VERSION
-  spec.authors = ["Jared White"]
-  spec.email = ["jared@jaredwhite.com"]
+  spec.author = "Bridgetown Team"
+  spec.emai = "maintainers@bridgetownrb.com"
 
   spec.summary = "Component-centric form object rendering for Ruby"
   spec.homepage = "https://github.com/bridgetownrb/lifeform"
