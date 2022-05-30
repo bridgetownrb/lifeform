@@ -12,7 +12,44 @@ $ bundle add lifeform
 
 ## Usage
 
-TODO: Write usage instructions here
+Full documentation coming as the library begins to mature. TL;DR:
+
+Given a form object of:
+
+```rb
+class TestForm < Lifeform::Form
+  field :occupation, label: "Your Job", id: "your-occupation", required: true
+  field :age, library: :shoelace, label: "Your Age"
+end
+```
+
+And a template rendering of:
+
+```erb
+<%= render TestForm.new(url: "/path") do %>
+  <%= render f.field(:occupation) %>
+  <%= render f.field(:age, value: 47) %>
+<% end %>
+```
+
+You get the following HTML output:
+
+```html
+<form method="post" accept-charset="UTF-8" action="/path">
+  <input type="hidden" name="authenticity_token" value="[token]" />
+  <form-field name="occupation">
+    <label for="your-occupation">Your Job</label>
+    <input type="text" id="your-occupation" required name="occupation" />
+  </form-field>
+  <form-field name="age">
+    <sl-input type="text" label="Your Age" name="age" value="47" id="age"></sl-input>
+  </form-field>
+</form>
+```
+
+Nested names based on models (aka `profile[name]`) and inferred action paths are supported as well.
+
+Multiple component libraries and input types—and easy customizability via [Papercraft](https://github.com/digital-fabric/papercraft) templates—are a fundamental aspect of the architecture of Lifeform.
 
 ## Development
 
