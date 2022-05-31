@@ -5,6 +5,9 @@ module Lifeform
     class Default
       FORM_TAG = :form
 
+      # @param form [LifeForm::Form]
+      # @param field_definition [LifeForm::FieldDefinition]
+      # @param attributes [Hash]
       # @return [Input]
       def self.object_for_field_definition(form, field_definition, attributes)
         type_classname = field_definition[:type].to_s.classify

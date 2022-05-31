@@ -10,6 +10,11 @@ module Lifeform
     MODEL_PATH_HELPER = :polymorphic_path
 
     class << self
+      def inherited(subclass)
+        super
+        subclass.library library
+      end
+
       # Helper to point to `I18n.t` method
       def t(...)
         I18n.t(...)
@@ -26,7 +31,8 @@ module Lifeform
       end
 
       def library(library_name = nil)
-        @library ||= library_name || :default
+        @library = library_name if library_name
+        @library ||= :default
       end
 
       def escape_value(value)
@@ -112,8 +118,11 @@ module Lifeform
     end
 
     def field(name, **field_parameters)
+      # @type [FieldDefinition]
       field_definition = self.class.fields[name]
-      field_definition.library.object_for_field_definition(
+      # @type [Class<Libraries::Default>]
+      field_library = field_definition.library
+      field_library.object_for_field_definition(
         self, field_definition, self.class.parameters_to_attributes(field_parameters)
       )
     end
