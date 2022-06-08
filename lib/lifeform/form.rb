@@ -6,7 +6,7 @@ module Lifeform
   FieldDefinition = Struct.new(:type, :library, :parameters)
 
   # A form object which stores field definitions and can be rendered as a component
-  class Form
+  class Form # rubocop:todo Metrics/ClassLength
     MODEL_PATH_HELPER = :polymorphic_path
 
     class << self
