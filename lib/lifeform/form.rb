@@ -127,11 +127,15 @@ module Lifeform
       )
     end
 
-    def render_in(view_context, &block) # rubocop:disable Metrics/AbcSize
+    def render_in(view_context, &block) # rubocop:disable Metrics
       form_tag = library::FORM_TAG
       parameters[:action] ||= url || (model ? view_context.send(self.class.const_get(:MODEL_PATH_HELPER), model) : nil)
 
-      content = view_context.capture(self, &block)
+      content = if block
+                  view_context.capture(self, &block)
+                else
+                  self.class.fields.map { |k, _v| field(k).render_in(self) }.join
+                end
 
       return content unless emit_form_tag
 

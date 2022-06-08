@@ -8,6 +8,12 @@ class TestForm < Lifeform::Form
   field :noshow
 end
 
+class TestAutolayout < Lifeform::Form
+  field :first_name, label: "First Name", required: true
+  field :last_name, label: "Last Name"
+  field :age, library: :shoelace, label: "Your Age"
+end
+
 class TestLifeform < Minitest::Test
   include Rails::Dom::Testing::Assertions
 
@@ -84,5 +90,28 @@ class TestLifeform < Minitest::Test
     assert_equal "47", sl_input[:value]
 
     refute form.css("form-field")[2]
+  end
+
+  def test_autolayout
+    autolayout_model = Struct.new("Person", :first_name, :last_name, :age).new
+
+    form_object = TestAutolayout.new(autolayout_model, url: "/post-me")
+    document_root(form_object.render_in(self))
+
+    form = css_select("form").first
+    puts form.to_html
+
+    assert_equal "/post-me", form[:action]
+    assert_equal "post", form[:method]
+
+    field_wrapper = form.css("form-field")[0]
+
+    assert_equal "struct_person[first_name]", field_wrapper[:name]
+
+    input = field_wrapper.at("input")
+
+    assert_equal "struct_person_first_name", input[:id]
+    assert_equal "text", input[:type]
+    assert_equal "struct_person[first_name]", input[:name]
   end
 end

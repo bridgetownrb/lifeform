@@ -51,6 +51,16 @@ Nested names based on models (aka `profile[name]`) and inferred action paths are
 
 Multiple component libraries and input types—and easy customizability via [Papercraft](https://github.com/digital-fabric/papercraft) templates—are a fundamental aspect of the architecture of Lifeform.
 
+### Automatic Field Rendering
+
+For simple forms, you can avoid the need to render fields individually in your template. Given the form example above, you could write in your template:
+
+```erb
+<%= render TestForm.new(url: "/path") %>
+```
+
+And the fields defined in `TestForm` would render out automatically (since no block was provided to the `render` method).
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `bin/rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
