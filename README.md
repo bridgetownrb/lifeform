@@ -20,6 +20,8 @@ Given a form object of:
 class TestForm < Lifeform::Form
   field :occupation, label: "Your Job", id: "your-occupation", required: true
   field :age, library: :shoelace, label: "Your Age"
+
+  field :submit, type: :submit_button, label: "Save", class: "font-bold"
 end
 ```
 
@@ -29,6 +31,7 @@ And a template rendering of:
 <%= render TestForm.new(url: "/path") do %>
   <%= render f.field(:occupation) %>
   <%= render f.field(:age, value: 47) %>
+  <%= render f.field(:submit) %>
 <% end %>
 ```
 
@@ -44,6 +47,9 @@ You get the following HTML output:
   <form-field name="age">
     <sl-input type="text" label="Your Age" name="age" value="47" id="age"></sl-input>
   </form-field>
+  <form-button name="commit">
+    <button class="font-bold" name="commit" type="submit">Save</button>
+  </form-button>
 </form>
 ```
 

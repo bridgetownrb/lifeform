@@ -12,6 +12,8 @@ class TestAutolayout < Lifeform::Form
   field :first_name, label: "First Name", required: true
   field :last_name, label: "Last Name"
   field :age, library: :shoelace, label: "Your Age"
+
+  field :submit, type: :submit_button, label: "Save", class: "font-bold"
 end
 
 class TestLifeform < Minitest::Test
@@ -99,7 +101,7 @@ class TestLifeform < Minitest::Test
     document_root(form_object.render_in(self))
 
     form = css_select("form").first
-    puts form.to_html
+    # puts form.to_html
 
     assert_equal "/post-me", form[:action]
     assert_equal "post", form[:method]
@@ -113,5 +115,14 @@ class TestLifeform < Minitest::Test
     assert_equal "struct_person_first_name", input[:id]
     assert_equal "text", input[:type]
     assert_equal "struct_person[first_name]", input[:name]
+
+    button_wrapper = form.css("form-button")[0]
+    assert_equal "commit", button_wrapper[:name]
+
+    button = button_wrapper.at("button")
+
+    assert_equal "submit", button[:type]
+    assert_equal "commit", button[:name]
+    assert_equal "Save", button.text
   end
 end
