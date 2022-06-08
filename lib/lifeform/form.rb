@@ -134,7 +134,9 @@ module Lifeform
       content = if block
                   view_context.capture(self, &block)
                 else
-                  self.class.fields.map { |k, _v| field(k).render_in(self) }.join
+                  self.class.fields.map { |k, _v| field(k).render_in(self) }.join.then do |renderings|
+                    renderings.respond_to?(:html_safe) ? renderings.html_safe : renderings
+                  end
                 end
 
       return content unless emit_form_tag
