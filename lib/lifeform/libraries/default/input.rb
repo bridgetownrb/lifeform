@@ -30,10 +30,9 @@ module Lifeform
         end
 
         def model_name
-          return @model.to_model.model_name.param_key if @model.respond_to?(:to_model)
+          name_of_model = @form.class.name_of_model(@model)
 
-          # Or just use basic underscore
-          @model.class.name.underscore.tr("/", "_")
+          form.parent_name ? "#{form.parent_name}[#{name_of_model}]" : name_of_model
         end
 
         def value_for_model

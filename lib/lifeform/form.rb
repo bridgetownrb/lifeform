@@ -25,13 +25,21 @@ module Lifeform
         @fields ||= {}
       end
 
+      def subforms
+        @subforms ||= {}
+      end
+
       def field(name, type: :text, library: self.library, **parameters)
-        parameters[:name] = name
+        parameters[:name] = name.to_sym
         fields[name] = FieldDefinition.new(type, Libraries.const_get(library.to_s.classify), parameters)
       end
 
+      def subform(name, klass, parent_name: nil)
+        subforms[name.to_sym] = { class: klass, parent_name: parent_name }
+      end
+
       def library(library_name = nil)
-        @library = library_name if library_name
+        @library = library_name.to_sym if library_name
         @library ||= :default
       end
 
@@ -65,6 +73,17 @@ module Lifeform
 
         attributes
       end
+
+      def name_of_model(model)
+        return "" if model.nil?
+
+        if model.respond_to?(:to_model)
+          model.to_model.model_name.param_key
+        else
+          # Or just use basic underscore
+          model.class.name.underscore.tr("/", "_")
+        end
+      end
     end
 
     # @return [Object]
@@ -82,9 +101,14 @@ module Lifeform
     # @return [Boolean]
     attr_reader :emit_form_tag
 
-    def initialize(model = nil, url: nil, library: self.class.library, emit_form_tag: true, **parameters)
-      @model, @url, @library_name, @parameters, @emit_form_tag = model, url, library, parameters, emit_form_tag
+    # @return [Boolean]
+    attr_reader :parent_name
+
+    def initialize(model = nil, url: nil, library: self.class.library, emit_form_tag: true, parent_name: nil, **parameters) # rubocop:disable Metrics/ParameterLists
+      @model, @url, @library_name, @parameters, @emit_form_tag, @parent_name =
+        model, url, library, parameters, emit_form_tag, parent_name
       @library = Libraries.const_get(@library_name.to_s.classify)
+      @subform_instances = {}
 
       parameters[:method] ||= model.respond_to?(:persisted?) && model.persisted? ? :patch : :post
       parameters[:accept_charset] ||= "UTF-8"
@@ -119,11 +143,19 @@ module Lifeform
 
     def field(name, **field_parameters)
       # @type [FieldDefinition]
-      field_definition = self.class.fields[name]
+      field_definition = self.class.fields[name.to_sym]
       # @type [Class<Libraries::Default>]
       field_library = field_definition.library
       field_library.object_for_field_definition(
         self, field_definition, self.class.parameters_to_attributes(field_parameters)
+      )
+    end
+
+    def subform(name, model = nil)
+      @subform_instances[name.to_sym] ||= self.class.subforms[name.to_sym][:class].new(
+        model,
+        emit_form_tag: false,
+        parent_name: self.class.subforms[name.to_sym][:parent_name] || self.class.name_of_model(self.model)
       )
     end
 

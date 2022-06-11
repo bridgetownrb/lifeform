@@ -2,10 +2,17 @@
 
 require "test_helper"
 
+class CompanyForm < Lifeform::Form
+  field :name, label: "Company Name", required: true
+  field :zipcode, label: "Zipcode"
+end
+
 class TestForm < Lifeform::Form
   field :occupation, label: "Your Job", id: "your-occupation", required: true
   field :age, library: :shoelace, label: "Your Age"
   field :noshow
+
+  subform :company, CompanyForm, parent_name: "person"
 end
 
 class TestAutolayout < Lifeform::Form
@@ -52,17 +59,22 @@ class TestLifeform < Minitest::Test
   end
 
   def test_form_output
+    company_model = Struct.new("Company", :name, :zipcode).new
+    company_model.name = "My Company"
+
     form_object = TestForm.new(url: "/path")
     document_root(form_object.render_in(self) do |f|
       [
         f.field(:occupation).render_in(self),
         f.field(:age, value: 47).render_in(self),
-        f.field(:noshow, if: false).render_in(self)
+        f.field(:noshow, if: false).render_in(self),
+
+        f.subform(:company, company_model).field(:name).render_in(self)
       ].join
     end)
 
     form = css_select("form").first
-    # puts form.to_html
+    puts form.to_html
 
     assert_equal "/path", form[:action]
     assert_equal "post", form[:method]
@@ -91,7 +103,15 @@ class TestLifeform < Minitest::Test
     assert_equal "age", sl_input[:name]
     assert_equal "47", sl_input[:value]
 
-    refute form.css("form-field")[2]
+    field_wrapper = form.css("form-field")[2]
+
+    input = field_wrapper.at("input")
+
+    assert_equal "person_struct_company_name", input[:id]
+    assert_equal "person[struct_company][name]", input[:name]
+    assert_equal "My Company", input[:value]
+
+    refute form.css("form-field")[3]
   end
 
   def test_autolayout
