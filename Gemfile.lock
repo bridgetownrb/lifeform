@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    lifeform (0.4.1)
+    lifeform (0.5)
       activesupport (>= 6.0)
       papercraft (~> 0.24)
       zeitwerk (~> 2.5)

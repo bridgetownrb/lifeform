@@ -74,7 +74,7 @@ class TestLifeform < Minitest::Test
     end)
 
     form = css_select("form").first
-    puts form.to_html
+    # puts form.to_html
 
     assert_equal "/path", form[:action]
     assert_equal "post", form[:method]

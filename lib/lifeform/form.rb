@@ -104,7 +104,9 @@ module Lifeform
     # @return [Boolean]
     attr_reader :parent_name
 
-    def initialize(model = nil, url: nil, library: self.class.library, emit_form_tag: true, parent_name: nil, **parameters) # rubocop:disable Metrics/ParameterLists
+    def initialize( # rubocop:disable Metrics/ParameterLists
+      model = nil, url: nil, library: self.class.library, emit_form_tag: true, parent_name: nil, **parameters
+    )
       @model, @url, @library_name, @parameters, @emit_form_tag, @parent_name =
         model, url, library, parameters, emit_form_tag, parent_name
       @library = Libraries.const_get(@library_name.to_s.classify)
