@@ -6,9 +6,13 @@ module Lifeform
       class SubmitButton < Button
         def initialize(form, field_definition, **attributes)
           attributes[:name] ||= "commit"
-          attributes[:type] = :submit
+          attributes[:type] = "submit"
 
           super
+        end
+
+        def template
+          internal_template
         end
       end
     end

@@ -1,9 +1,17 @@
+GIT
+  remote: https://github.com/joeldrapper/phlex.git
+  revision: 417009c55f062bf007007bb6d6da5350483875cc
+  specs:
+    phlex (0.1.0)
+      zeitwerk (~> 2.6)
+
 PATH
   remote: .
   specs:
     lifeform (0.5)
       activesupport (>= 6.0)
       papercraft (~> 0.24)
+      phlex (~> 0.1)
       zeitwerk (~> 2.5)
 
 GEM
@@ -98,7 +106,7 @@ GEM
     webrick (1.7.0)
     yard (0.9.27)
       webrick (~> 1.7.0)
-    zeitwerk (2.5.4)
+    zeitwerk (2.6.0)
 
 PLATFORMS
   arm64-darwin-21
@@ -108,6 +116,7 @@ DEPENDENCIES
   lifeform!
   minitest (~> 5.0)
   minitest-reporters (~> 1.5)
+  phlex!
   rails-dom-testing (~> 2.0)
   rake (~> 13.0)
   rubocop (~> 1.21)

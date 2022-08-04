@@ -121,7 +121,7 @@ class TestLifeform < Minitest::Test
     document_root(form_object.render_in(self))
 
     form = css_select("form").first
-    # puts form.to_html
+    puts form.to_html
 
     assert_equal "/post-me", form[:action]
     assert_equal "post", form[:method]

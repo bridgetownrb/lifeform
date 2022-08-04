@@ -55,7 +55,7 @@ You get the following HTML output:
 
 Nested names based on models (aka `profile[name]`) and inferred action paths are supported as well.
 
-Multiple component libraries and input types—and easy customizability via [Papercraft](https://github.com/digital-fabric/papercraft) templates—are a fundamental aspect of the architecture of Lifeform.
+Multiple component libraries and input types—and easy customizability via [Phlex](https://github.com/joeldrapper/phlex) templates—are a fundamental aspect of the architecture of Lifeform.
 
 ### Automatic Field Rendering
 

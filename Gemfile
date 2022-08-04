@@ -19,3 +19,4 @@ gem "rails-dom-testing", "~> 2.0"
 gem "rubocop-minitest", "~> 0.20.0"
 gem "rubocop-rake", "~> 0.6.0"
 
+gem "phlex", github: "joeldrapper/phlex"
