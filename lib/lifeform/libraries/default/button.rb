@@ -41,7 +41,7 @@ module Lifeform
             button_tag: self.class.const_get(:BUTTON_TAG),
             attributes: attributes,
             field_data: {
-              label: @label,
+              label: EscapeUtils.unescape_html(@label.to_s),
               content: @content && @view_context.capture(&@content)
             }
           )

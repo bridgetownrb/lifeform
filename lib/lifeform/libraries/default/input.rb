@@ -41,9 +41,9 @@ module Lifeform
 
         def handle_labels
           Papercraft.html do |label_text, name|
-            label label_text, for: name
+            label(for: name) { emit label_text }
           end.render(
-            attributes[:label].to_s,
+            EscapeUtils.unescape_html(attributes[:label].to_s),
             (attributes[:id] || attributes[:name]).to_s
           ).tap do
             @attributes = attributes.filter_map { |k, v| [k, v] unless k == :label }.to_h

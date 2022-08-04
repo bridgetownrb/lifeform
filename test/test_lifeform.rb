@@ -16,11 +16,11 @@ class TestForm < Lifeform::Form
 end
 
 class TestAutolayout < Lifeform::Form
-  field :first_name, label: "First Name", required: true
+  field :first_name, label: "<b>First Name</b>", required: true
   field :last_name, label: "Last Name"
   field :age, library: :shoelace, label: "Your Age"
 
-  field :submit, type: :submit_button, label: "Save", class: "font-bold"
+  field :submit, type: :submit_button, label: "<i>Save</i>", class: "font-bold"
 end
 
 class TestLifeform < Minitest::Test
@@ -130,6 +130,10 @@ class TestLifeform < Minitest::Test
 
     assert_equal "struct_person[first_name]", field_wrapper[:name]
 
+    label = field_wrapper.at("label")
+
+    assert_equal "<b>First Name</b>", label.inner_html
+
     input = field_wrapper.at("input")
 
     assert_equal "struct_person_first_name", input[:id]
@@ -143,6 +147,6 @@ class TestLifeform < Minitest::Test
 
     assert_equal "submit", button[:type]
     assert_equal "commit", button[:name]
-    assert_equal "Save", button.text
+    assert_equal "<i>Save</i>", button.inner_html
   end
 end
