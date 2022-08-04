@@ -3,11 +3,13 @@
 module Lifeform
   module Libraries
     class Default
-      class Input
+      class Input < Phlex::Component
         attr_reader :form, :field_definition, :attributes
 
-        INPUT_TAG = :input
         WRAPPER_TAG = :form_field
+        INPUT_TAG = :input
+
+        register_element WRAPPER_TAG
 
         def initialize(form, field_definition, **attributes)
           @form = form
@@ -40,44 +42,37 @@ module Lifeform
         end
 
         def handle_labels
-          Papercraft.html do |label_text, name|
-            label(for: name) { emit label_text }
-          end.render(
-            EscapeUtils.unescape_html(attributes[:label].to_s),
-            (attributes[:id] || attributes[:name]).to_s
-          ).tap do
-            @attributes = attributes.filter_map { |k, v| [k, v] unless k == :label }.to_h
-          end
+          label_text = attributes[:label].to_s
+          label_name = (attributes[:id] || attributes[:name]).to_s
+
+          @attributes = attributes.filter_map { |k, v| [k, v] unless k == :label }.to_h
+
+          proc {
+            label(for: label_name) { _raw label_text }
+          }
         end
 
-        def render_in(view_context, &block)
-          @view_context = view_context
-          @content = block
-          return "" if !@if.nil? && !@if
+        def internal_template # rubocop:disable Metrics/AbcSize
+          return if !@if.nil? && !@if
 
-          template
+          wrapper_tag = self.class.const_get(:WRAPPER_TAG)
+          input_tag = self.class.const_get(:INPUT_TAG)
+          field_data = {
+            content: @content && @view_context.capture(&@content)
+          }
+
+          field_body = proc {
+            @label&.()
+            send input_tag, type: @field_type.to_s, **@attributes
+            _raw field_data[:content] if field_data[:content]
+          }
+          return field_body.call unless wrapper_tag
+
+          send wrapper_tag, name: @attributes[:name], &field_body
         end
 
-        def template # rubocop:disable Metrics/AbcSize
-          Papercraft.html do |wrapper_tag:, input_tag:, attributes:, field_data:|
-            field_body = proc {
-              emit(field_data[:label]) if field_data[:label]
-              send input_tag, type: field_data[:type], **attributes
-              emit(field_data[:content]) if field_data[:content]
-            }
-            next field_body.call unless wrapper_tag
-
-            send wrapper_tag, name: attributes[:name], &field_body
-          end.render(
-            wrapper_tag: self.class.const_get(:WRAPPER_TAG),
-            input_tag: self.class.const_get(:INPUT_TAG),
-            attributes: attributes,
-            field_data: {
-              type: @field_type,
-              label: @label,
-              content: @content && @view_context.capture(&@content)
-            }
-          )
+        def template
+          internal_template # let subclasses use this too
         end
       end
     end

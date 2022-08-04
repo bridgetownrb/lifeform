@@ -25,7 +25,6 @@ Gem::Specification.new do |spec|
 
   # Uncomment to register a new dependency of your gem
   spec.add_dependency "activesupport", ">= 6.0"
-  spec.add_dependency "papercraft", "~> 0.24"
   spec.add_dependency "phlex", "~> 0.1"
   spec.add_dependency "zeitwerk", "~> 2.5"
 end

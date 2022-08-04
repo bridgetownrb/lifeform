@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "papercraft"
 require "phlex"
 
 module Phlex

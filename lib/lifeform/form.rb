@@ -43,33 +43,34 @@ module Lifeform
         @library ||= :default
       end
 
-      def escape_value(value)
+      def process_value(key, value)
+        return value if key == :if
+
         case value
-        when TrueClass, FalseClass
-          value
+        when TrueClass
+          key.to_s
+        when FalseClass
+          nil
+        when Symbol, Integer
+          value.to_s
         else
-          EscapeUtils.escape_html(value.to_s)
+          value
         end
       end
 
       # @param kwargs [Hash]
       def parameters_to_attributes(kwargs)
-        previous_value = EscapeUtils.html_secure
-        EscapeUtils.html_secure = false
-
         attributes = {}
         kwargs.each do |key, value|
           case value
           when Hash
             value.each do |inner_key, inner_value|
-              attributes[:"#{key}_#{inner_key}"] = escape_value(inner_value)
+              attributes[:"#{key}_#{inner_key}"] = process_value(inner_key, inner_value)
             end
           else
-            attributes[key] = escape_value(value) unless value.nil?
+            attributes[key] = process_value(key, value) unless value.nil?
           end
         end
-
-        EscapeUtils.html_secure = previous_value
 
         attributes
       end
@@ -120,9 +121,12 @@ module Lifeform
     def verify_method
       return if %w[get post].include?(parameters[:method].to_s.downcase)
 
-      @method_tag = Papercraft.html do |method_name|
-        input type: "hidden", name: "_method", value: method_name, autocomplete: "off"
-      end.render(parameters[:method].to_s.downcase)
+      @method_tag = Class.new(Phlex::Component) do
+        def template
+          input type: "hidden", name: "_method", value: @method, autocomplete: "off"
+        end
+      end.new(method: @parameters[:method].to_s.downcase)
+
       parameters[:method] = :post
     end
 
@@ -176,15 +180,28 @@ module Lifeform
       return content unless emit_form_tag
 
       content = add_authenticity_token(view_context) + content.to_s unless parameters[:method].to_s.downcase == "get"
-      content = @method_tag + content.to_s if @method_tag
 
       # if @hidden_submit_button
       #   content += %(\n<button type="submit" style="position: absolute; left: -9999px"></button>).html_safe
       # end
 
-      Papercraft.html do |attr|
-        send(form_tag, **attr) { emit content }
-      end.render(attributes)
+      template(form_tag: form_tag, method_tag: @method_tag, form_contents: content).()
+    end
+
+    def template(form_tag:, method_tag:, form_contents:)
+      Class.new(Phlex::Component) do
+        def template
+          send(@form_tag, **@attributes) do
+            _raw @method_tag&.() || ""
+            _raw @form_contents
+          end
+        end
+      end.new(
+        form_tag: form_tag,
+        attributes: attributes,
+        method_tag: method_tag,
+        form_contents: form_contents
+      )
     end
   end
 end

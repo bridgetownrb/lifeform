@@ -17,7 +17,7 @@ end
 
 class TestAutolayout < Lifeform::Form
   field :first_name, label: "<b>First Name</b>", required: true
-  field :last_name, label: "Last Name"
+  field :last_name, label: "Last Name", goof: "<em>Wow</em>"
   field :age, library: :shoelace, label: "Your Age"
 
   field :submit, type: :submit_button, label: "<i>Save</i>", class: "font-bold"
@@ -115,16 +115,17 @@ class TestLifeform < Minitest::Test
   end
 
   def test_autolayout
-    autolayout_model = Struct.new("Person", :first_name, :last_name, :age).new
+    autolayout_model = Struct.new("Person", :first_name, :last_name, :age, :persisted?, keyword_init: true).new(persisted?: true)
 
     form_object = TestAutolayout.new(autolayout_model, url: "/post-me")
     document_root(form_object.render_in(self))
 
     form = css_select("form").first
-    puts form.to_html
+    # puts form.to_html
 
     assert_equal "/post-me", form[:action]
     assert_equal "post", form[:method]
+    assert_equal "patch", form.css("input[type=hidden]")[0][:value]
 
     field_wrapper = form.css("form-field")[0]
 

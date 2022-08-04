@@ -20,13 +20,13 @@ module Lifeform
           @attributes[:type] ||= "button"
         end
 
-        def internal_template
+        def internal_template # rubocop:disable Metrics/AbcSize
           return if !@if.nil? && !@if
 
           wrapper_tag = self.class.const_get(:WRAPPER_TAG)
           button_tag = self.class.const_get(:BUTTON_TAG)
           field_data = {
-            label: EscapeUtils.unescape_html(@label.to_s),
+            label: @label.to_s,
             content: @content && @view_context.capture(&@content)
           }
 
