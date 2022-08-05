@@ -10,10 +10,6 @@ module Lifeform
 
         # no-op
         def handle_labels; end
-
-        def template
-          internal_template
-        end
       end
     end
   end

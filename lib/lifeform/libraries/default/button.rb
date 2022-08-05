@@ -20,7 +20,7 @@ module Lifeform
           @attributes[:type] ||= "button"
         end
 
-        def internal_template # rubocop:disable Metrics/AbcSize
+        def template # rubocop:disable Metrics/AbcSize
           return if !@if.nil? && !@if
 
           wrapper_tag = self.class.const_get(:WRAPPER_TAG)
@@ -38,10 +38,6 @@ module Lifeform
           return field_body.call unless wrapper_tag
 
           send wrapper_tag, name: @attributes[:name], &field_body
-        end
-
-        def template
-          internal_template # let subclasses use this too
         end
       end
     end

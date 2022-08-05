@@ -10,10 +10,6 @@ module Lifeform
 
           super
         end
-
-        def template
-          internal_template
-        end
       end
     end
   end
