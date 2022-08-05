@@ -115,7 +115,9 @@ class TestLifeform < Minitest::Test
   end
 
   def test_autolayout
-    autolayout_model = Struct.new("Person", :first_name, :last_name, :age, :persisted?, keyword_init: true).new(persisted?: true)
+    autolayout_model = Struct.new(
+      "Person", :first_name, :last_name, :age, :persisted?, keyword_init: true
+    ).new(persisted?: true)
 
     form_object = TestAutolayout.new(autolayout_model, url: "/post-me")
     document_root(form_object.render_in(self))

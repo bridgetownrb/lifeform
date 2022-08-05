@@ -35,7 +35,7 @@ module Lifeform
               _raw field_data[:content] || field_data[:label]
             end
           }
-          return field_body.call unless wrapper_tag
+          return field_body.() unless wrapper_tag
 
           send wrapper_tag, name: @attributes[:name], &field_body
         end

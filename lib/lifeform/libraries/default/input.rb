@@ -57,16 +57,14 @@ module Lifeform
 
           wrapper_tag = self.class.const_get(:WRAPPER_TAG)
           input_tag = self.class.const_get(:INPUT_TAG)
-          field_data = {
-            content: @content && @view_context.capture(&@content)
-          }
+          field_content = @content && @view_context.capture(&@content)
 
           field_body = proc {
             @label&.()
             send input_tag, type: @field_type.to_s, **@attributes
-            _raw field_data[:content] if field_data[:content]
+            _raw field_content if field_content
           }
-          return field_body.call unless wrapper_tag
+          return field_body.() unless wrapper_tag
 
           send wrapper_tag, name: @attributes[:name], &field_body
         end
