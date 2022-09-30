@@ -1,6 +1,6 @@
 # Lifeform
 
-Component-centric form object rendering for Ruby.
+Component-centric form object rendering for Ruby. Powered by [Phlex](https://www.phlex.fun)
 
 ## Installation
 
@@ -28,11 +28,23 @@ end
 And a template rendering of:
 
 ```erb
+<!-- ERB -->
 <%= render TestForm.new(url: "/path") do %>
   <%= render f.field(:occupation) %>
   <%= render f.field(:age, value: 47) %>
   <%= render f.field(:submit) %>
 <% end %>
+```
+
+```rb
+# Or Phlex:
+def template
+  render TestForm.new(url: "/path") do |f|
+    render f.field(:occupation)
+    render f.field(:age, value: 47)
+    render f.field(:submit)
+  end
+end
 ```
 
 You get the following HTML output:
