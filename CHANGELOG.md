@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [0.7.0] - 2022-09-30
+
+- Rearchitect library to be built on top of the Phlex view library
+
 ## [0.5.0] - 2022-06-10
 
 ## [0.4.0] - 2022-06-08

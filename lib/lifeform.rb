@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require "papercraft"
+require "phlex"
+require "active_support/core_ext/string/output_safety"
 
 require "zeitwerk"
 loader = Zeitwerk::Loader.for_gem

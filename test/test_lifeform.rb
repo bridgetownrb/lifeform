@@ -17,7 +17,7 @@ end
 
 class TestAutolayout < Lifeform::Form
   field :first_name, label: "<b>First Name</b>", required: true
-  field :last_name, label: "Last Name"
+  field :last_name, label: "Last Name", goof: "<em>Wow</em>"
   field :age, library: :shoelace, label: "Your Age"
 
   field :submit, type: :submit_button, label: "<i>Save</i>", class: "font-bold"
@@ -65,11 +65,11 @@ class TestLifeform < Minitest::Test
     form_object = TestForm.new(url: "/path")
     document_root(form_object.render_in(self) do |f|
       [
-        f.field(:occupation).render_in(self),
-        f.field(:age, value: 47).render_in(self),
-        f.field(:noshow, if: false).render_in(self),
+        f.render(f.field(:occupation)),
+        f.render(f.field(:age, value: 47)),
+        f.render(f.field(:noshow, if: false)),
 
-        f.subform(:company, company_model).field(:name).render_in(self)
+        f.render(f.subform(:company, company_model).field(:name))
       ].join
     end)
 
@@ -115,7 +115,9 @@ class TestLifeform < Minitest::Test
   end
 
   def test_autolayout
-    autolayout_model = Struct.new("Person", :first_name, :last_name, :age).new
+    autolayout_model = Struct.new(
+      "Person", :first_name, :last_name, :age, :persisted?, keyword_init: true
+    ).new(persisted?: true)
 
     form_object = TestAutolayout.new(autolayout_model, url: "/post-me")
     document_root(form_object.render_in(self))
@@ -125,6 +127,7 @@ class TestLifeform < Minitest::Test
 
     assert_equal "/post-me", form[:action]
     assert_equal "post", form[:method]
+    assert_equal "patch", form.css("input[type=hidden]")[0][:value]
 
     field_wrapper = form.css("form-field")[0]
 
@@ -148,5 +151,31 @@ class TestLifeform < Minitest::Test
     assert_equal "submit", button[:type]
     assert_equal "commit", button[:name]
     assert_equal "<i>Save</i>", button.inner_html
+  end
+
+  def test_inside_phlex
+    phlex_view = Class.new(Phlex::View) do
+      def initialize
+        @form = TestForm.new(url: "/path")
+      end
+
+      def template
+        h1 "Howdy"
+        render @form do |f|
+          render f.field(:occupation)
+          render f.field(:age, value: 47)
+        end
+      end
+    end
+
+    result = phlex_view.new.render_in(self)
+
+    assert_equal <<~HTML.strip, result
+      <h1>Howdy</h1><form method="post" accept-charset="UTF-8" action="/path"><form-field name="occupation"><label for="your-occupation">Your Job</label><input type="text" id="your-occupation" required="required" name="occupation" /></form-field><form-field name="age"><sl-input type="text" label="Your Age" name="age" value="47" id="age"></sl-input></form-field></form>
+    HTML
+  end
+
+  def render(obj, &block)
+    obj.render_in(self, &block)
   end
 end

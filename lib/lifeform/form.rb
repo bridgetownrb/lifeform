@@ -6,7 +6,8 @@ module Lifeform
   FieldDefinition = Struct.new(:type, :library, :parameters)
 
   # A form object which stores field definitions and can be rendered as a component
-  class Form # rubocop:todo Metrics/ClassLength
+  class Form < Phlex::View # rubocop:todo Metrics/ClassLength
+    include CapturingRenderable
     MODEL_PATH_HELPER = :polymorphic_path
 
     class << self
@@ -43,33 +44,34 @@ module Lifeform
         @library ||= :default
       end
 
-      def escape_value(value)
+      def process_value(key, value)
+        return value if key == :if
+
         case value
-        when TrueClass, FalseClass
-          value
+        when TrueClass
+          key.to_s
+        when FalseClass
+          nil
+        when Symbol, Integer
+          value.to_s
         else
-          EscapeUtils.escape_html(value.to_s)
+          value
         end
       end
 
       # @param kwargs [Hash]
       def parameters_to_attributes(kwargs)
-        previous_value = EscapeUtils.html_secure
-        EscapeUtils.html_secure = false
-
         attributes = {}
         kwargs.each do |key, value|
           case value
           when Hash
             value.each do |inner_key, inner_value|
-              attributes[:"#{key}_#{inner_key}"] = escape_value(inner_value)
+              attributes[:"#{key}_#{inner_key}"] = process_value(inner_key, inner_value)
             end
           else
-            attributes[key] = escape_value(value) unless value.nil?
+            attributes[key] = process_value(key, value) unless value.nil?
           end
         end
-
-        EscapeUtils.html_secure = previous_value
 
         attributes
       end
@@ -120,20 +122,27 @@ module Lifeform
     def verify_method
       return if %w[get post].include?(parameters[:method].to_s.downcase)
 
-      @method_tag = Papercraft.html do |method_name|
-        input type: "hidden", name: "_method", value: method_name, autocomplete: "off"
-      end.render(parameters[:method].to_s.downcase)
+      @method_tag = Class.new(Phlex::View) do # TODO: break this out into a real component
+        def initialize(method:)
+          @method = method
+        end
+
+        def template
+          input type: "hidden", name: "_method", value: @method, autocomplete: "off"
+        end
+      end.new(method: @parameters[:method].to_s.downcase)
+
       parameters[:method] = :post
     end
 
-    def add_authenticity_token(view_context) # rubocop:disable Metrics/AbcSize
-      if view_context.respond_to?(:token_tag, true) # Rails
-        view_context.send(:token_tag, nil, form_options: {
-                            action: parameters[:action].to_s,
-                            method: parameters[:method].to_s.downcase
-                          })
-      elsif view_context.respond_to?(:csrf_tag, true) # Roda
-        view_context.send(:csrf_tag, action: parameters[:action].to_s, method: parameters[:method].to_s)
+    def add_authenticity_token # rubocop:disable Metrics/AbcSize
+      if helpers.respond_to?(:token_tag, true) # Rails
+        helpers.send(:token_tag, nil, form_options: {
+                       action: parameters[:action].to_s,
+                       method: parameters[:method].to_s.downcase
+                     })
+      elsif helpers.respond_to?(:csrf_tag, true) # Roda
+        helpers.send(:csrf_tag, action: parameters[:action].to_s, method: parameters[:method].to_s)
       else
         raise Lifeform::Error, "Missing token tag helper. Override `add_authenticity_token' in your Form object"
       end
@@ -161,30 +170,19 @@ module Lifeform
       )
     end
 
-    def render_in(view_context, &block) # rubocop:disable Metrics
+    def template(&block) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
       form_tag = library::FORM_TAG
-      parameters[:action] ||= url || (model ? view_context.send(self.class.const_get(:MODEL_PATH_HELPER), model) : nil)
+      parameters[:action] ||= url || (model ? helpers.send(self.class.const_get(:MODEL_PATH_HELPER), model) : nil)
 
-      content = if block
-                  view_context.capture(self, &block)
-                else
-                  self.class.fields.map { |k, _v| field(k).render_in(self) }.join.then do |renderings|
-                    renderings.respond_to?(:html_safe) ? renderings.html_safe : renderings
-                  end
-                end
+      send(form_tag, **attributes) do
+        raw(add_authenticity_token) unless parameters[:method].to_s.downcase == "get"
+        raw @method_tag&.() || ""
+        block ? yield_content(&block) : auto_render_fields
+      end
+    end
 
-      return content unless emit_form_tag
-
-      content = add_authenticity_token(view_context) + content.to_s unless parameters[:method].to_s.downcase == "get"
-      content = @method_tag + content.to_s if @method_tag
-
-      # if @hidden_submit_button
-      #   content += %(\n<button type="submit" style="position: absolute; left: -9999px"></button>).html_safe
-      # end
-
-      Papercraft.html do |attr|
-        send(form_tag, **attr) { emit content }
-      end.render(attributes)
+    def auto_render_fields
+      self.class.fields.map { |k, _v| render(field(k)) }
     end
   end
 end
