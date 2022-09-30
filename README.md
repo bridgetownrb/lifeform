@@ -29,7 +29,7 @@ And a template rendering of:
 
 ```erb
 <!-- ERB -->
-<%= render TestForm.new(url: "/path") do %>
+<%= render TestForm.new(url: "/path") do |f| %>
   <%= render f.field(:occupation) %>
   <%= render f.field(:age, value: 47) %>
   <%= render f.field(:submit) %>
