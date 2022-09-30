@@ -3,7 +3,7 @@
 module Lifeform
   module Libraries
     class Default
-      class Input < Phlex::Component
+      class Input < Phlex::View
         attr_reader :form, :field_definition, :attributes
 
         WRAPPER_TAG = :form_field
@@ -48,7 +48,7 @@ module Lifeform
           @attributes = attributes.filter_map { |k, v| [k, v] unless k == :label }.to_h
 
           proc {
-            label(for: label_name) { _raw label_text }
+            label(for: label_name) { raw label_text }
           }
         end
 
@@ -62,7 +62,7 @@ module Lifeform
           field_body = proc {
             @label&.()
             send input_tag, type: @field_type.to_s, **@attributes
-            _raw field_content if field_content
+            raw field_content if field_content
           }
           return field_body.() unless wrapper_tag
 

@@ -3,7 +3,7 @@
 module Lifeform
   module Libraries
     class Default
-      class Button < Phlex::Component
+      class Button < Phlex::View
         attr_reader :form, :field_definition, :attributes
 
         WRAPPER_TAG = :form_button
@@ -32,7 +32,7 @@ module Lifeform
 
           field_body = proc {
             send(button_tag, **@attributes) do
-              _raw field_data[:content] || field_data[:label]
+              raw field_data[:content] || field_data[:label]
             end
           }
           return field_body.() unless wrapper_tag

@@ -121,7 +121,10 @@ module Lifeform
     def verify_method
       return if %w[get post].include?(parameters[:method].to_s.downcase)
 
-      @method_tag = Class.new(Phlex::Component) do
+      @method_tag = Class.new(Phlex::View) do # TODO: break this out into a real component
+        def initialize(method:)
+          @method = method
+        end
         def template
           input type: "hidden", name: "_method", value: @method, autocomplete: "off"
         end
@@ -189,14 +192,7 @@ module Lifeform
     end
 
     def template(form_tag:, method_tag:, form_contents:)
-      Class.new(Phlex::Component) do
-        def template
-          send(@form_tag, **@attributes) do
-            _raw @method_tag&.() || ""
-            _raw @form_contents
-          end
-        end
-      end.new(
+      FormView.new(
         form_tag: form_tag,
         attributes: attributes,
         method_tag: method_tag,
