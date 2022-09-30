@@ -4,6 +4,8 @@ module Lifeform
   module Libraries
     class Default
       class Button < Phlex::View
+        include CapturingRenderable
+
         attr_reader :form, :field_definition, :attributes
 
         WRAPPER_TAG = :form_button
@@ -20,19 +22,16 @@ module Lifeform
           @attributes[:type] ||= "button"
         end
 
-        def template # rubocop:disable Metrics/AbcSize
+        def template(&block)
           return if !@if.nil? && !@if
 
           wrapper_tag = self.class.const_get(:WRAPPER_TAG)
           button_tag = self.class.const_get(:BUTTON_TAG)
-          field_data = {
-            label: @label.to_s,
-            content: @content && @view_context.capture(&@content)
-          }
 
           field_body = proc {
             send(button_tag, **@attributes) do
-              raw field_data[:content] || field_data[:label]
+              raw(@label.to_s) unless block
+              yield_content(&block)
             end
           }
           return field_body.() unless wrapper_tag

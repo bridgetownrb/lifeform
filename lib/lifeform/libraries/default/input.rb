@@ -4,6 +4,8 @@ module Lifeform
   module Libraries
     class Default
       class Input < Phlex::View
+        include CapturingRenderable
+
         attr_reader :form, :field_definition, :attributes
 
         WRAPPER_TAG = :form_field
@@ -52,17 +54,16 @@ module Lifeform
           }
         end
 
-        def template # rubocop:disable Metrics/AbcSize
+        def template(&block)
           return if !@if.nil? && !@if
 
           wrapper_tag = self.class.const_get(:WRAPPER_TAG)
           input_tag = self.class.const_get(:INPUT_TAG)
-          field_content = @content && @view_context.capture(&@content)
 
           field_body = proc {
             @label&.()
             send input_tag, type: @field_type.to_s, **@attributes
-            raw field_content if field_content
+            yield_content(&block)
           }
           return field_body.() unless wrapper_tag
 
