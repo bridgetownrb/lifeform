@@ -114,7 +114,7 @@ module Lifeform
       @library = Libraries.const_get(@library_name.to_s.classify)
       @subform_instances = {}
 
-      parameters[:method] ||= model.respond_to?(:persisted?) && model.persisted? ? :patch : :post
+      @method = parameters[:method] ||= model.respond_to?(:persisted?) && model.persisted? ? :patch : :post
       parameters[:accept_charset] ||= "UTF-8"
       verify_method
     end
@@ -142,7 +142,7 @@ module Lifeform
                        method: parameters[:method].to_s.downcase
                      })
       elsif helpers.respond_to?(:csrf_tag, true) # Roda
-        helpers.send(:csrf_tag, action: parameters[:action].to_s, method: parameters[:method].to_s)
+        helpers.send(:csrf_tag, parameters[:action].to_s, @method.to_s)
       else
         raise Lifeform::Error, "Missing token tag helper. Override `add_authenticity_token' in your Form object"
       end
