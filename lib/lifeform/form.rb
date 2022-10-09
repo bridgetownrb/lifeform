@@ -86,6 +86,16 @@ module Lifeform
           model.class.name.underscore.tr("/", "_")
         end
       end
+
+      # @return [Array<Symbol>]
+      def param_keys
+        fields.keys
+      end
+
+      # @return [Array<String>]
+      def param_string_keys
+        fields.keys.map(&:to_s)
+      end
     end
 
     # @return [Object]
