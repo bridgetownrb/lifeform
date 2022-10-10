@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [0.8.0] - 2022-10-09
+
+- Add initializer for Bridgetown 1.2+
+- Fix for Roda csrf
+
 ## [0.7.0] - 2022-09-30
 
 - Rearchitect library to be built on top of the Phlex view library
