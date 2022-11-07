@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [0.9.0] - 2022-11-06
+
+- Add button & submit button support for Shoelace
+
 ## [0.8.0] - 2022-10-09
 
 - Add initializer for Bridgetown 1.2+
