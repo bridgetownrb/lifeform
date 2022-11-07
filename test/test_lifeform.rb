@@ -160,7 +160,7 @@ class TestLifeform < Minitest::Test
       end
 
       def template
-        h1 "Howdy"
+        h1 { "Howdy" }
         render @form do |f|
           render f.field(:occupation)
           render f.field(:age, value: 47)
