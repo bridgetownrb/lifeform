@@ -7,7 +7,7 @@ module Lifeform
     def render_in(view_context, &block)
       if block
         call(view_context: view_context) do |*args, **kwargs|
-          raw(view_context.capture(*args, **kwargs, &block))
+          unsafe_raw(view_context.capture(*args, **kwargs, &block))
         end.html_safe
       else
         call(view_context: view_context).html_safe

@@ -6,7 +6,7 @@ module Lifeform
   FieldDefinition = Struct.new(:type, :library, :parameters)
 
   # A form object which stores field definitions and can be rendered as a component
-  class Form < Phlex::View # rubocop:todo Metrics/ClassLength
+  class Form < Phlex::HTML # rubocop:todo Metrics/ClassLength
     include CapturingRenderable
     MODEL_PATH_HELPER = :polymorphic_path
 
@@ -132,7 +132,7 @@ module Lifeform
     def verify_method
       return if %w[get post].include?(parameters[:method].to_s.downcase)
 
-      @method_tag = Class.new(Phlex::View) do # TODO: break this out into a real component
+      @method_tag = Class.new(Phlex::HTML) do # TODO: break this out into a real component
         def initialize(method:)
           @method = method
         end
@@ -185,8 +185,8 @@ module Lifeform
       parameters[:action] ||= url || (model ? helpers.send(self.class.const_get(:MODEL_PATH_HELPER), model) : nil)
 
       send(form_tag, **attributes) do
-        raw(add_authenticity_token) unless parameters[:method].to_s.downcase == "get"
-        raw @method_tag&.() || ""
+        unsafe_raw(add_authenticity_token) unless parameters[:method].to_s.downcase == "get"
+        unsafe_raw @method_tag&.() || ""
         block ? yield_content(&block) : auto_render_fields
       end
     end

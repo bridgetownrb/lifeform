@@ -3,7 +3,7 @@
 module Lifeform
   module Libraries
     class Default
-      class Input < Phlex::View
+      class Input < Phlex::HTML
         include CapturingRenderable
 
         attr_reader :form, :field_definition, :attributes
@@ -50,7 +50,7 @@ module Lifeform
           @attributes = attributes.filter_map { |k, v| [k, v] unless k == :label }.to_h
 
           proc {
-            label(for: label_name) { raw label_text }
+            label(for: label_name) { unsafe_raw label_text }
           }
         end
 
