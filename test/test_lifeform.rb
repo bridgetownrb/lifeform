@@ -154,7 +154,7 @@ class TestLifeform < Minitest::Test
   end
 
   def test_inside_phlex
-    phlex_view = Class.new(Phlex::View) do
+    phlex_view = Class.new(Phlex::HTML) do
       def initialize
         @form = TestForm.new(url: "/path")
       end
@@ -171,7 +171,7 @@ class TestLifeform < Minitest::Test
     result = phlex_view.new.render_in(self)
 
     assert_equal <<~HTML.strip, result
-      <h1>Howdy</h1><form method="post" accept-charset="UTF-8" action="/path"><form-field name="occupation"><label for="your-occupation">Your Job</label><input type="text" id="your-occupation" required="required" name="occupation" /></form-field><form-field name="age"><sl-input type="text" label="Your Age" name="age" value="47" id="age"></sl-input></form-field></form>
+      <h1>Howdy</h1><form method="post" accept-charset="UTF-8" action="/path"><form-field name="occupation"><label for="your-occupation">Your Job</label><input type="text" id="your-occupation" required="required" name="occupation"></form-field><form-field name="age"><sl-input type="text" label="Your Age" name="age" value="47" id="age"></sl-input></form-field></form>
     HTML
   end
 

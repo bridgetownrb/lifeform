@@ -3,7 +3,7 @@
 module Lifeform
   module Libraries
     class Default
-      class Button < Phlex::View
+      class Button < Phlex::HTML
         include CapturingRenderable
 
         attr_reader :form, :field_definition, :attributes
@@ -30,7 +30,7 @@ module Lifeform
 
           field_body = proc {
             send(button_tag, **@attributes) do
-              raw(@label.to_s) unless block
+              unsafe_raw(@label.to_s) unless block
               yield_content(&block)
             end
           }
