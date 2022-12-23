@@ -7,8 +7,10 @@ Component-centric form object rendering for Ruby. Powered by [Phlex](https://www
 Add Lifeform to your application's Gemfile by running:
 
 ```sh
-$ bundle add lifeform
+bundle add lifeform
 ```
+
+If you're in a Rails app, you'll want to `bundle add phlex-rails` as well for Action View rendering support.
 
 ## Usage
 

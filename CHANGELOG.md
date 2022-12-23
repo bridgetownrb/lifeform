@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [0.10.0] - 2022-12-23
+
+- Support Phlex 1.0 and conditional `render_in` support for Bridgetown
+
 ## [0.9.0] - 2022-11-06
 
 - Add button & submit button support for Shoelace

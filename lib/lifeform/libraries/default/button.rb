@@ -4,6 +4,7 @@ module Lifeform
   module Libraries
     class Default
       class Button < Phlex::HTML
+        using RefineProcToString
         include CapturingRenderable
 
         attr_reader :form, :field_definition, :attributes

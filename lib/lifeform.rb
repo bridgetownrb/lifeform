@@ -9,13 +9,21 @@ loader.setup
 
 module Lifeform
   class Error < StandardError; end
+
+  module RefineProcToString
+    refine Proc do
+      def to_s
+        call.to_s
+      end
+    end
+  end
 end
 
 if defined?(Bridgetown)
   # Check compatibility
   raise "The Lifeform support for Bridgetown requires v1.2 or newer" if Bridgetown::VERSION.to_f < 1.2
 
-  Bridgetown.initializer :lifeform do |config|
-    # no extra config at the moment
+  Bridgetown.initializer :lifeform do # |config|
+    require "lifeform/phlex_renderable" unless Phlex::HTML.instance_methods.include?(:render_in)
   end
 end
