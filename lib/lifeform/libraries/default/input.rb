@@ -40,9 +40,7 @@ module Lifeform
           form.parent_name ? "#{form.parent_name}[#{name_of_model}]" : name_of_model
         end
 
-        def value_for_model
-          @model.send(attributes[:name])
-        end
+        def value_for_model = @model.send(attributes[:name])
 
         def handle_labels
           label_text = attributes[:label].to_s

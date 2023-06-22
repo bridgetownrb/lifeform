@@ -62,9 +62,7 @@ module Lifeform
       end
     end
 
-    def capture
-      super.html_safe
-    end
+    def capture = super.html_safe
 
     # Trick ViewComponent into thinking we're a ViewComponent to fix rendering output
     def set_original_view_context(view_context)

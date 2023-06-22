@@ -8,12 +8,16 @@ class CompanyForm < Lifeform::Form
 end
 
 class TestForm < Lifeform::Form
-  field :occupation, label: "Your Job", id: "your-occupation", required: true
-  field :age, library: :shoelace, label: "Your Age"
-  field :noshow
+  fields do |config|
+    field config.occupation_key, label: "Your Job", id: "your-occupation", required: true
+    field :age, library: :shoelace, label: "Your Age"
+    field :noshow
 
-  subform :company, CompanyForm, parent_name: "person"
+    subform :company, CompanyForm, parent_name: "person"
+  end
 end
+
+TestForm.configuration.occupation_key = :occupation
 
 class TestAutolayout < Lifeform::Form
   field :first_name, label: "<b>First Name</b>", required: true

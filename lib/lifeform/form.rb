@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "active_support/core_ext/string/inflections"
+require "active_support/ordered_options"
 
 module Lifeform
   FieldDefinition = Struct.new(:type, :library, :parameters)
@@ -17,18 +18,26 @@ module Lifeform
       end
 
       # Helper to point to `I18n.t` method
-      def t(...)
-        I18n.t(...)
-      end
+      def t(...) = I18n.t(...)
 
+      def configuration = @configuration ||= ActiveSupport::OrderedOptions.new
+
+      # @param block [Proc, nil]
       # @return [Hash<Symbol, FieldDefinition>]
-      def fields
+      def fields(&block)
         @fields ||= {}
+        @fields_setup_block = block if block_given?
+
+        @fields
       end
 
-      def subforms
-        @subforms ||= {}
+      def initialize_field_definitions!
+        return unless @fields_setup_block
+
+        @fields_setup_block.(configuration)
       end
+
+      def subforms = @subforms ||= {}
 
       def field(name, type: :text, library: self.library, **parameters)
         parameters[:name] = name.to_sym
@@ -88,14 +97,10 @@ module Lifeform
       end
 
       # @return [Array<Symbol>]
-      def param_keys
-        fields.keys
-      end
+      def param_keys = fields.keys
 
       # @return [Array<String>]
-      def param_string_keys
-        fields.keys.map(&:to_s)
-      end
+      def param_string_keys = fields.keys.map(&:to_s)
     end
 
     # @return [Object]
@@ -123,6 +128,8 @@ module Lifeform
         model, url, library, parameters, emit_form_tag, parent_name
       @library = Libraries.const_get(@library_name.to_s.classify)
       @subform_instances = {}
+
+      self.class.initialize_field_definitions!
 
       @method = parameters[:method] ||= model.respond_to?(:persisted?) && model.persisted? ? :patch : :post
       parameters[:accept_charset] ||= "UTF-8"
@@ -191,8 +198,6 @@ module Lifeform
       end
     end
 
-    def auto_render_fields
-      self.class.fields.map { |k, _v| render(field(k)) }
-    end
+    def auto_render_fields = self.class.fields.map { |k, _v| render(field(k)) }
   end
 end

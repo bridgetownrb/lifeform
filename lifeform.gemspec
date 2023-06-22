@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.summary = "Component-centric form object rendering for Ruby"
   spec.homepage = "https://github.com/bridgetownrb/lifeform"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 2.7"
+  spec.required_ruby_version = ">= 3.0"
   spec.metadata["rubygems_mfa_required"] = "true"
 
   # Specify which files should be added to the gem when it is released.
@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   # Uncomment to register a new dependency of your gem
-  spec.add_dependency "activesupport", ">= 6.0"
-  spec.add_dependency "phlex", "~> 1.0"
+  spec.add_dependency "activesupport", ">= 7.0"
+  spec.add_dependency "phlex", ">= 1.7"
   spec.add_dependency "zeitwerk", "~> 2.5"
 end

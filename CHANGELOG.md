@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.11.0] - 2023-06-22
+
+- Upgrade to Phlex 1.7+, Ruby 3.0+
+- Provide a form-wide configuration object
+- Allow field definitions to be added via `fields` block (useful for when you need to reference runtime configuration)
+
 ## [0.10.0] - 2022-12-23
 
 - Support Phlex 1.0 and conditional `render_in` support for Bridgetown
