@@ -3,16 +3,13 @@
 module Lifeform
   module Libraries
     class Default
-      class Input < Phlex::HTML
-        using RefineProcToString
-        include CapturingRenderable
+      class Input
+        include Lifeform::Renderable
 
         attr_reader :form, :field_definition, :attributes
 
         WRAPPER_TAG = :form_field
         INPUT_TAG = :input
-
-        register_element WRAPPER_TAG
 
         def initialize(form, field_definition, **attributes)
           @form = form
@@ -30,7 +27,8 @@ module Lifeform
           @if = attributes.delete(:if)
           attributes[:value] ||= value_for_model if form.model
           attributes[:name] = "#{model_name}[#{attributes[:name]}]" if @model
-          attributes[:id] ||= attributes[:name].parameterize(separator: "_")
+          # TODO: validate if this is enough
+          attributes[:id] ||= attributes[:name].tr("[]", "_").gsub("__", "_").chomp("_") if attributes[:name]
           @label = handle_labels if attributes[:label]
         end
 
@@ -42,31 +40,41 @@ module Lifeform
 
         def value_for_model = @model.send(attributes[:name])
 
-        def handle_labels
-          label_text = attributes[:label].to_s
+        def handle_labels # rubocop:disable Metrics/AbcSize
+          label_text = attributes[:label].is_a?(Proc) ? attributes[:label].pipe : attributes[:label]
           label_name = (attributes[:id] || attributes[:name]).to_s
 
           @attributes = attributes.filter_map { |k, v| [k, v] unless k == :label }.to_h
 
-          proc {
-            label(for: label_name) { unsafe_raw label_text }
+          -> {
+            <<~HTML
+              <label #{attribute_segment :for, label_name}>#{text -> { label_text }}</label>
+            HTML
           }
         end
 
-        def template(&block)
-          return if !@if.nil? && !@if
+        def template(&block) # rubocop:disable Metrics/AbcSize
+          return "" if !@if.nil? && !@if
 
-          wrapper_tag = self.class.const_get(:WRAPPER_TAG)
-          input_tag = self.class.const_get(:INPUT_TAG)
+          wrapper_tag = dashed self.class.const_get(:WRAPPER_TAG)
+          input_tag = dashed self.class.const_get(:INPUT_TAG)
+          closing_tag = input_tag != "input"
 
-          field_body = proc {
-            @label&.()
-            send input_tag, type: @field_type.to_s, **@attributes
-            yield_content(&block)
+          field_body = html -> {
+            <<~HTML
+              #{html(@label || -> {}).to_s.strip}
+              <#{input_tag}#{attrs -> { { type: @field_type.to_s, **@attributes } }}>#{"</#{input_tag}>" if closing_tag}
+              #{html -> { capture(self, &block) } if block}
+            HTML
           }
-          return field_body.() unless wrapper_tag
 
-          send wrapper_tag, name: @attributes[:name], &field_body
+          return field_body unless wrapper_tag
+
+          html -> {
+            <<~HTML
+              <#{wrapper_tag}#{attrs -> { { name: @attributes[:name] } }}>#{field_body.to_s.strip}</#{wrapper_tag}>
+            HTML
+          }
         end
       end
     end

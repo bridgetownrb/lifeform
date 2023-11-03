@@ -1,14 +1,15 @@
 # frozen_string_literal: true
 
-require "active_support/core_ext/string/inflections"
-require "active_support/ordered_options"
+require "hash_with_dot_access"
 
 module Lifeform
   FieldDefinition = Struct.new(:type, :library, :parameters)
 
   # A form object which stores field definitions and can be rendered as a component
-  class Form < Phlex::HTML # rubocop:todo Metrics/ClassLength
-    include CapturingRenderable
+  class Form # rubocop:todo Metrics/ClassLength
+    include Lifeform::Renderable
+    extend Sequel::Inflections
+
     MODEL_PATH_HELPER = :polymorphic_path
 
     class << self
@@ -20,7 +21,7 @@ module Lifeform
       # Helper to point to `I18n.t` method
       def t(...) = I18n.t(...)
 
-      def configuration = @configuration ||= ActiveSupport::OrderedOptions.new
+      def configuration = @configuration ||= HashWithDotAccess::Hash.new
 
       # @param block [Proc, nil]
       # @return [Hash<Symbol, FieldDefinition>]
@@ -41,7 +42,7 @@ module Lifeform
 
       def field(name, type: :text, library: self.library, **parameters)
         parameters[:name] = name.to_sym
-        fields[name] = FieldDefinition.new(type, Libraries.const_get(library.to_s.classify), parameters)
+        fields[name] = FieldDefinition.new(type, Libraries.const_get(camelize(library)), parameters)
       end
 
       def subform(name, klass, parent_name: nil)
@@ -92,7 +93,7 @@ module Lifeform
           model.to_model.model_name.param_key
         else
           # Or just use basic underscore
-          model.class.name.underscore.tr("/", "_")
+          underscore(model.class.name).tr("/", "_")
         end
       end
 
@@ -126,7 +127,7 @@ module Lifeform
     )
       @model, @url, @library_name, @parameters, @emit_form_tag, @parent_name =
         model, url, library, parameters, emit_form_tag, parent_name
-      @library = Libraries.const_get(@library_name.to_s.classify)
+      @library = Libraries.const_get(self.class.send(:camelize, @library_name))
       @subform_instances = {}
 
       self.class.initialize_field_definitions!
@@ -139,15 +140,13 @@ module Lifeform
     def verify_method
       return if %w[get post].include?(parameters[:method].to_s.downcase)
 
-      @method_tag = Class.new(Phlex::HTML) do # TODO: break this out into a real component
-        def initialize(method:)
-          @method = method
-        end
+      method_value = @parameters[:method].to_s.downcase
 
-        def template
-          input type: "hidden", name: "_method", value: @method, autocomplete: "off"
-        end
-      end.new(method: @parameters[:method].to_s.downcase)
+      @method_tag = -> {
+        <<~HTML
+          <input type="hidden" name="_method" #{attribute_segment :value, method_value} autocomplete="off">
+        HTML
+      }
 
       parameters[:method] = :post
     end
@@ -191,13 +190,21 @@ module Lifeform
       form_tag = library::FORM_TAG
       parameters[:action] ||= url || (model ? helpers.send(self.class.const_get(:MODEL_PATH_HELPER), model) : nil)
 
-      send(form_tag, **attributes) do
-        unsafe_raw(add_authenticity_token) unless parameters[:method].to_s.downcase == "get"
-        unsafe_raw @method_tag&.() || ""
-        block ? yield_content(&block) : auto_render_fields
-      end
+      html -> {
+        <<~HTML
+          <#{form_tag}#{attrs -> { attributes }}>
+            #{add_authenticity_token unless parameters[:method].to_s.downcase == "get"}
+            #{@method_tag&.() || ""}
+            #{block ? capture(self, &block) : auto_render_fields}
+          </#{form_tag}>
+        HTML
+      }
     end
 
-    def auto_render_fields = self.class.fields.map { |k, _v| render(field(k)) }
+    def auto_render_fields = html_map(self.class.fields) { |k, _v| render(field(k)) }
+
+    def render(field_object)
+      field_object.render_in(helpers || self)
+    end
   end
 end

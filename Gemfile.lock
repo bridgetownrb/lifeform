@@ -2,8 +2,9 @@ PATH
   remote: .
   specs:
     lifeform (0.11.0)
-      activesupport (>= 7.0)
-      phlex (>= 1.7)
+      hash_with_dot_access (>= 1.2)
+      sequel (>= 5.72)
+      serbea (>= 2.0)
       zeitwerk (~> 2.5)
 
 GEM
@@ -18,13 +19,14 @@ GEM
     ast (2.4.2)
     backport (1.2.0)
     benchmark (0.2.1)
+    bigdecimal (3.1.4)
     builder (3.2.4)
-    cgi (0.3.6)
     concurrent-ruby (1.2.2)
     diff-lcs (1.5.0)
     e2mmap (0.1.0)
-    erb (4.0.2)
-      cgi (>= 0.3.3)
+    erubi (1.12.0)
+    hash_with_dot_access (1.2.0)
+      activesupport (>= 5.0.0, < 8.0)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
     jaro_winkler (1.5.6)
@@ -47,10 +49,6 @@ GEM
     parser (3.2.2.3)
       ast (~> 2.4.1)
       racc
-    phlex (1.8.1)
-      concurrent-ruby (~> 1.2)
-      erb (>= 4)
-      zeitwerk (~> 2.6)
     racc (1.7.1)
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
@@ -78,6 +76,12 @@ GEM
     rubocop-rake (0.6.0)
       rubocop (~> 1.0)
     ruby-progressbar (1.13.0)
+    sequel (5.74.0)
+      bigdecimal
+    serbea (2.0.0)
+      activesupport (>= 6.0)
+      erubi (>= 1.10)
+      tilt (~> 2.0)
     solargraph (0.45.0)
       backport (~> 1.2)
       benchmark

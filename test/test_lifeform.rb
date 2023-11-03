@@ -20,11 +20,11 @@ end
 TestForm.configuration.occupation_key = :occupation
 
 class TestAutolayout < Lifeform::Form
-  field :first_name, label: "<b>First Name</b>", required: true
-  field :last_name, label: "Last Name", goof: "<em>Wow</em>"
+  field :first_name, label: "<b>First Name</b>".html_safe, required: true
+  field :last_name, label: -> { "Last Name" }, goof: "<em>Wow</em>"
   field :age, library: :shoelace, label: "Your Age"
 
-  field :submit, type: :submit_button, label: "<i>Save</i>", class: "font-bold"
+  field :submit, type: :submit_button, label: "<i>Save</i>".html_safe, class: "font-bold"
 end
 
 class TestLifeform < Minitest::Test
@@ -147,6 +147,9 @@ class TestLifeform < Minitest::Test
     assert_equal "text", input[:type]
     assert_equal "struct_person[first_name]", input[:name]
 
+    label = form.at("label[for='struct_person_last_name']")
+    assert_equal "Last Name", label.inner_html
+
     button_wrapper = form.css("form-button")[0]
     assert_equal "commit", button_wrapper[:name]
 
@@ -155,28 +158,6 @@ class TestLifeform < Minitest::Test
     assert_equal "submit", button[:type]
     assert_equal "commit", button[:name]
     assert_equal "<i>Save</i>", button.inner_html
-  end
-
-  def test_inside_phlex
-    phlex_view = Class.new(Phlex::HTML) do
-      def initialize
-        @form = TestForm.new(url: "/path")
-      end
-
-      def template
-        h1 { "Howdy" }
-        render @form do |f|
-          render f.field(:occupation)
-          render f.field(:age, value: 47)
-        end
-      end
-    end
-
-    result = phlex_view.new.render_in(self)
-
-    assert_equal <<~HTML.strip, result
-      <h1>Howdy</h1><form method="post" accept-charset="UTF-8" action="/path"><form-field name="occupation"><label for="your-occupation">Your Job</label><input type="text" id="your-occupation" required="required" name="occupation"></form-field><form-field name="age"><sl-input type="text" label="Your Age" name="age" value="47" id="age"></sl-input></form-field></form>
-    HTML
   end
 
   def render(obj, &block)

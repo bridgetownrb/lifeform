@@ -3,16 +3,13 @@
 module Lifeform
   module Libraries
     class Default
-      class Button < Phlex::HTML
-        using RefineProcToString
-        include CapturingRenderable
+      class Button
+        include Lifeform::Renderable
 
         attr_reader :form, :field_definition, :attributes
 
         WRAPPER_TAG = :form_button
         BUTTON_TAG = :button
-
-        register_element WRAPPER_TAG
 
         def initialize(form, field_definition, **attributes)
           @form = form
@@ -23,21 +20,27 @@ module Lifeform
           @attributes[:type] ||= "button"
         end
 
-        def template(&block)
-          return if !@if.nil? && !@if
+        def template(&block) # rubocop:disable Metrics/AbcSize
+          return "" if !@if.nil? && !@if
 
-          wrapper_tag = self.class.const_get(:WRAPPER_TAG)
-          button_tag = self.class.const_get(:BUTTON_TAG)
+          wrapper_tag = dashed self.class.const_get(:WRAPPER_TAG)
+          button_tag = dashed self.class.const_get(:BUTTON_TAG)
 
-          field_body = proc {
-            send(button_tag, **@attributes) do
-              unsafe_raw(@label.to_s) unless block
-              yield_content(&block)
-            end
+          label_text = block ? capture(self, &block) : @label.is_a?(Proc) ? @label.pipe : @label # rubocop:disable Style/NestedTernaryOperator
+
+          field_body = html -> {
+            <<-HTML
+              <#{button_tag}#{attrs -> { @attributes }}>#{text -> { label_text }}</#{button_tag}>
+            HTML
           }
-          return field_body.() unless wrapper_tag
 
-          send wrapper_tag, name: @attributes[:name], &field_body
+          return field_body unless wrapper_tag
+
+          html -> {
+            <<-HTML
+              <#{wrapper_tag}#{attrs -> { { name: @attributes[:name] } }}>#{field_body}</#{wrapper_tag}>
+            HTML
+          }
         end
       end
     end

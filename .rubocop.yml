@@ -5,8 +5,6 @@ require:
 AllCops:
   TargetRubyVersion: 3.0
   NewCops: enable
-  Exclude:
-    - lib/lifeform/phlex_renderable.rb
 
 Lint/MissingSuper:
   Enabled: false

@@ -10,7 +10,7 @@ module Lifeform
       # @param attributes [Hash]
       # @return [Input]
       def self.object_for_field_definition(form, field_definition, attributes)
-        type_classname = field_definition[:type].to_s.classify
+        type_classname = Lifeform::Form.send(:camelize, field_definition[:type])
         if const_defined?(type_classname)
           const_get(type_classname)
         else
