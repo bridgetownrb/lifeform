@@ -23,8 +23,8 @@ Gem::Specification.new do |spec|
   end
   spec.require_paths = ["lib"]
 
-  # Uncomment to register a new dependency of your gem
-  spec.add_dependency "activesupport", ">= 7.0"
-  spec.add_dependency "phlex", ">= 1.7"
+  spec.add_dependency "hash_with_dot_access", ">= 1.2"
+  spec.add_dependency "sequel", ">= 5.72"
+  spec.add_dependency "serbea", ">= 2.0"
   spec.add_dependency "zeitwerk", "~> 2.5"
 end
