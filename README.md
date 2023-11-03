@@ -1,6 +1,6 @@
 # Lifeform
 
-Component-centric form object rendering for Ruby.
+Component-centric form object rendering for Ruby. Rails and Bridgetown both supported.
 
 ## Installation
 
@@ -9,8 +9,6 @@ Add Lifeform to your application's Gemfile by running:
 ```sh
 bundle add lifeform
 ```
-
-If you're in a Rails app, you'll want to `bundle add phlex-rails` as well for Action View rendering support.
 
 ## Usage
 
