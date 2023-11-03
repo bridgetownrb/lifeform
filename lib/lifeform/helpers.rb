@@ -38,6 +38,14 @@ module Lifeform
       "#{attr}=#{value.to_s.encode(xml: :attr)}"
     end
 
+    def attrs(callback)
+      attrs_string = attributes_from_options(callback.() || {})
+
+      attrs_string = " #{attrs_string}" unless attrs_string.blank?
+
+      attrs_string
+    end
+
     # Below is verbatim copied over from Bridgetown
     # TODO: extract both out to a shared gem
 

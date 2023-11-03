@@ -204,7 +204,7 @@ module Lifeform
     def auto_render_fields = html_map(self.class.fields) { |k, _v| render(field(k)) }
 
     def render(field_object)
-      field_object.render_in(self)
+      field_object.render_in(helpers || self)
     end
   end
 end
