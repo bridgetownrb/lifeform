@@ -1,6 +1,6 @@
 # Lifeform
 
-Component-centric form object rendering for Ruby. Powered by [Phlex](https://www.phlex.fun)
+Component-centric form object rendering for Ruby.
 
 ## Installation
 
@@ -38,17 +38,6 @@ And a template rendering of:
 <% end %>
 ```
 
-```rb
-# Or Phlex:
-def template
-  render TestForm.new(url: "/path") do |f|
-    render f.field(:occupation)
-    render f.field(:age, value: 47)
-    render f.field(:submit)
-  end
-end
-```
-
 You get the following HTML output:
 
 ```html
@@ -69,7 +58,7 @@ You get the following HTML output:
 
 Nested names based on models (aka `profile[name]`) and inferred action paths are supported as well.
 
-Multiple component libraries and input types—and easy customizability via [Phlex](https://github.com/joeldrapper/phlex) templates—are a fundamental aspect of the architecture of Lifeform.
+Multiple component libraries and input types—and easy customizability using string interpolation templates and helpers—are a fundamental aspect of the architecture of Lifeform. Until further docs have been written, you can look in `lib/lifeform/libraries` to see how some initial field types were constructed.
 
 ### Automatic Field Rendering
 
