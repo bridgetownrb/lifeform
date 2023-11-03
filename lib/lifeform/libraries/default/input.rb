@@ -40,8 +40,8 @@ module Lifeform
 
         def value_for_model = @model.send(attributes[:name])
 
-        def handle_labels
-          label_text = attributes[:label].to_s
+        def handle_labels # rubocop:disable Metrics/AbcSize
+          label_text = attributes[:label].is_a?(Proc) ? attributes[:label].pipe : attributes[:label]
           label_name = (attributes[:id] || attributes[:name]).to_s
 
           @attributes = attributes.filter_map { |k, v| [k, v] unless k == :label }.to_h
@@ -64,17 +64,17 @@ module Lifeform
             <<~HTML
               #{html(@label || -> {}).to_s.strip}
               <#{input_tag}#{attrs -> { { type: @field_type.to_s, **@attributes } }}>#{"</#{input_tag}>" if closing_tag}
-              #{html -> { block.() } if block}
+              #{html -> { capture(self, &block) } if block}
             HTML
           }
 
-          return field_body.to_s.strip unless wrapper_tag
+          return field_body unless wrapper_tag
 
-          html(-> {
+          html -> {
             <<~HTML
               <#{wrapper_tag}#{attrs -> { { name: @attributes[:name] } }}>#{field_body.to_s.strip}</#{wrapper_tag}>
             HTML
-          }).to_s.strip
+          }
         end
       end
     end

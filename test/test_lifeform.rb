@@ -21,7 +21,7 @@ TestForm.configuration.occupation_key = :occupation
 
 class TestAutolayout < Lifeform::Form
   field :first_name, label: "<b>First Name</b>".html_safe, required: true
-  field :last_name, label: "Last Name", goof: "<em>Wow</em>"
+  field :last_name, label: -> { "Last Name" }, goof: "<em>Wow</em>"
   field :age, library: :shoelace, label: "Your Age"
 
   field :submit, type: :submit_button, label: "<i>Save</i>".html_safe, class: "font-bold"
@@ -146,6 +146,9 @@ class TestLifeform < Minitest::Test
     assert_equal "struct_person_first_name", input[:id]
     assert_equal "text", input[:type]
     assert_equal "struct_person[first_name]", input[:name]
+
+    label = form.at("label[for='struct_person_last_name']")
+    assert_equal "Last Name", label.inner_html
 
     button_wrapper = form.css("form-button")[0]
     assert_equal "commit", button_wrapper[:name]

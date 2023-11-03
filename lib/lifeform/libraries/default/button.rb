@@ -26,19 +26,21 @@ module Lifeform
           wrapper_tag = dashed self.class.const_get(:WRAPPER_TAG)
           button_tag = dashed self.class.const_get(:BUTTON_TAG)
 
+          label_text = block ? capture(self, &block) : @label.is_a?(Proc) ? @label.pipe : @label # rubocop:disable Style/NestedTernaryOperator
+
           field_body = html -> {
             <<-HTML
-              <#{button_tag}#{attrs -> { @attributes }}>#{text -> { block ? block.() : @label }}</#{button_tag}>
+              <#{button_tag}#{attrs -> { @attributes }}>#{text -> { label_text }}</#{button_tag}>
             HTML
           }
 
-          return field_body.to_s.strip unless wrapper_tag
+          return field_body unless wrapper_tag
 
-          html(-> {
+          html -> {
             <<-HTML
               <#{wrapper_tag}#{attrs -> { { name: @attributes[:name] } }}>#{field_body}</#{wrapper_tag}>
             HTML
-          }).to_s.strip
+          }
         end
       end
     end

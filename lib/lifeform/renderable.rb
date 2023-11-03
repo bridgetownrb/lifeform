@@ -18,7 +18,7 @@ module Lifeform
 
     def render_in(view_context, &block)
       @_view_context = view_context
-      template(&block)
+      template(&block).to_s.strip
     end
 
     def helpers

@@ -190,7 +190,7 @@ module Lifeform
       form_tag = library::FORM_TAG
       parameters[:action] ||= url || (model ? helpers.send(self.class.const_get(:MODEL_PATH_HELPER), model) : nil)
 
-      html(-> {
+      html -> {
         <<~HTML
           <#{form_tag}#{attrs -> { attributes }}>
             #{add_authenticity_token unless parameters[:method].to_s.downcase == "get"}
@@ -198,7 +198,7 @@ module Lifeform
             #{block ? capture(self, &block) : auto_render_fields}
           </#{form_tag}>
         HTML
-      }).to_s.strip
+      }
     end
 
     def auto_render_fields = html_map(self.class.fields) { |k, _v| render(field(k)) }
