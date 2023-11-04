@@ -25,6 +25,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "hash_with_dot_access", ">= 1.2"
   spec.add_dependency "sequel", ">= 5.72"
-  spec.add_dependency "serbea", ">= 2.0"
+  spec.add_dependency "serbea", ">= 2.1"
   spec.add_dependency "zeitwerk", "~> 2.5"
 end

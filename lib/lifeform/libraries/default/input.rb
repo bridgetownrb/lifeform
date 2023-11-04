@@ -63,7 +63,7 @@ module Lifeform
           field_body = html -> {
             <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
               #{html(@label || -> {}).to_s.strip}
-              <#{input_tag}#{html_attributes({ type: @field_type.to_s, **@attributes }, prefix_space: true)}>#{
+              <#{input_tag} #{html_attributes type: @field_type.to_s, **@attributes}>#{
                 "</#{input_tag}>" if closing_tag
               }
               #{html -> { capture(self, &block) } if block}
@@ -74,7 +74,7 @@ module Lifeform
 
           html -> {
             <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
-              <#{wrapper_tag}#{html_attributes({ name: @attributes[:name] }, prefix_space: true)}>#{field_body.to_s.strip}</#{wrapper_tag}>
+              <#{wrapper_tag} #{html_attributes name: @attributes[:name]}>#{field_body.to_s.strip}</#{wrapper_tag}>
             HTML
           }
         end

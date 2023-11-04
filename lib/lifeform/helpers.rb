@@ -10,11 +10,12 @@ module Lifeform
 
     # Create a set of attributes from a hash.
     #
-    # @param options [Hash] key-value pairs of HTML attributes
+    # @param options [Hash] key-value pairs of HTML attributes (or use keyword arguments)
     # @param prefix_space [Boolean] add a starting space if attributes are present,
     #   useful in tag builders
     # @return [String]
-    def html_attributes(options, prefix_space: false)
+    def html_attributes(options = nil, prefix_space: false, **kwargs)
+      options ||= kwargs
       segments = []
       options.each do |attr, option|
         attr = dashed(attr)

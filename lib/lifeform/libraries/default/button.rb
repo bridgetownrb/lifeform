@@ -38,7 +38,7 @@ module Lifeform
 
           html -> {
             <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
-              <#{wrapper_tag}#{html_attributes({ name: @attributes[:name] }, prefix_space: true)}>#{field_body}</#{wrapper_tag}>
+              <#{wrapper_tag} #{html_attributes name: @attributes[:name]}>#{field_body}</#{wrapper_tag}>
             HTML
           }
         end
