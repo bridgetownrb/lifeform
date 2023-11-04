@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require "hash_with_dot_access"
+require "sequel/model/default_inflections"
+require "sequel/model/inflections"
 
 module Lifeform
   FieldDefinition = Struct.new(:type, :library, :parameters)

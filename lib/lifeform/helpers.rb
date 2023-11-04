@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "sequel/model/default_inflections"
-require "sequel/model/inflections"
-
 module Lifeform
   module Helpers
     # Below is pretty much verbatim copied over from Bridgetown
@@ -79,7 +76,7 @@ module Lifeform
 
     def text(callback)
       (callback.is_a?(Proc) ? html(callback) : callback).to_s.then do |str|
-        next str if str.respond_to?(:html_safe) && str.html_safe?
+        next str if str.html_safe?
 
         str.encode(xml: :attr).gsub(%r{\A"|"\Z}, "")
       end
