@@ -1,13 +1,32 @@
 require:
+ - rubocop-bridgetown
  - rubocop-minitest
  - rubocop-rake
+
+inherit_gem:
+  rubocop-bridgetown: .rubocop.yml
 
 AllCops:
   TargetRubyVersion: 3.0
   NewCops: enable
 
-Lint/MissingSuper:
-  Enabled: false
+  Exclude:
+    - .gitignore
+    - .rubocop.yml
+    - "*.gemspec"
+
+    - Gemfile.lock
+    - CHANGELOG.md
+    - LICENSE.txt
+    - README.md
+    - Rakefile
+
+    - bin/**/*
+    - test/fixtures/**/*
+    - vendor/**/*
+
+# Lint/MissingSuper:
+#   Enabled: false
 
 Metrics/AbcSize:
   Exclude:
@@ -18,32 +37,31 @@ Metrics/ClassLength:
   - test/**/*.rb
 
 Metrics/MethodLength:
-  Max: 20
   Exclude:
   - test/**/*.rb
 
-Style/Documentation:
-  Enabled: false
+# Style/Documentation:
+#   Enabled: false
 
-Style/Lambda:
-  Enabled: false
+# Style/Lambda:
+#   Enabled: false
 
-Style/LambdaCall:
-  Enabled: false
+# Style/LambdaCall:
+#   Enabled: false
 
-Style/MultilineBlockChain:
-  Enabled: false
+# Style/MultilineBlockChain:
+#   Enabled: false
 
-Style/StringLiterals:
-  Enabled: true
-  EnforcedStyle: double_quotes
+# Style/StringLiterals:
+#   Enabled: true
+#   EnforcedStyle: double_quotes
 
-Style/StringLiteralsInInterpolation:
-  Enabled: true
-  EnforcedStyle: double_quotes
+# Style/StringLiteralsInInterpolation:
+#   Enabled: true
+#   EnforcedStyle: double_quotes
 
-Style/ParallelAssignment:
-  Enabled: false
+# Style/ParallelAssignment:
+#   Enabled: false
 
 Layout/LineLength:
   Max: 120

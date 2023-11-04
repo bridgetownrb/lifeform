@@ -11,6 +11,7 @@ gem "minitest", "~> 5.0"
 gem "minitest-reporters", "~> 1.5"
 
 gem "rubocop", "~> 1.21"
+gem "rubocop-bridgetown", "~> 0.4"
 
 gem "solargraph", "~> 0.45.0"
 

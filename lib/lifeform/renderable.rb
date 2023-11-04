@@ -13,8 +13,8 @@ module Lifeform
       @_view_context
     end
 
-    def capture(*args, &block)
-      helpers ? helpers.capture(*args, &block) : yield(*args)
+    def capture(...)
+      helpers ? helpers.capture(...) : yield(*args)
     end
   end
 end

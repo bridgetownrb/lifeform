@@ -73,7 +73,7 @@ class TestLifeform < Minitest::Test
         f.render(f.field(:age, value: 47)),
         f.render(f.field(:noshow, if: false)),
 
-        f.render(f.subform(:company, company_model).field(:name))
+        f.render(f.subform(:company, company_model).field(:name)),
       ].join
     end)
 

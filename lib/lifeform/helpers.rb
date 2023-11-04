@@ -5,18 +5,29 @@ require "sequel/model/inflections"
 
 module Lifeform
   module Helpers
-    def attributes_from_options(options)
+    # Below is pretty much verbatim copied over from Bridgetown
+    # TODO: extract both out to a shared gem
+
+    # Create a set of attributes from a hash.
+    #
+    # @param options [Hash] key-value pairs of HTML attributes
+    # @param prefix_space [Boolean] add a starting space if attributes are present,
+    #   useful in tag builders
+    # @return [String]
+    def html_attributes(options, prefix_space: false)
       segments = []
       options.each do |attr, option|
         attr = dashed(attr)
         if option.is_a?(Hash)
           option = option.transform_keys { |key| "#{attr}-#{dashed(key)}" }
-          segments << attributes_from_options(option)
+          segments << html_attributes(option)
         else
           segments << attribute_segment(attr, option)
         end
       end
-      segments.join(" ")
+      segments.join(" ").then do |output|
+        prefix_space && !output.empty? ? " #{output}" : output
+      end
     end
 
     # Covert an underscored value into a dashed string.
@@ -37,17 +48,6 @@ module Lifeform
     def attribute_segment(attr, value)
       "#{attr}=#{value.to_s.encode(xml: :attr)}"
     end
-
-    def attrs(callback)
-      attrs_string = attributes_from_options(callback.() || {})
-
-      attrs_string = " #{attrs_string}" unless attrs_string.blank?
-
-      attrs_string
-    end
-
-    # Below is verbatim copied over from Bridgetown
-    # TODO: extract both out to a shared gem
 
     module PipeableProc
       include Serbea::Pipeline::Helper
@@ -80,7 +80,7 @@ module Lifeform
       (callback.is_a?(Proc) ? html(callback) : callback).to_s.then do |str|
         next str if str.respond_to?(:html_safe) && str.html_safe?
 
-        str.encode(xml: :attr).gsub(/\A"|"\Z/, "")
+        str.encode(xml: :attr).gsub(%r{\A"|"\Z}, "")
       end
     end
 

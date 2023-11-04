@@ -20,7 +20,7 @@ module Lifeform
           @attributes[:type] ||= "button"
         end
 
-        def template(&block) # rubocop:disable Metrics/AbcSize
+        def template(&block)
           return "" if !@if.nil? && !@if
 
           wrapper_tag = dashed self.class.const_get(:WRAPPER_TAG)
@@ -29,16 +29,16 @@ module Lifeform
           label_text = block ? capture(self, &block) : @label.is_a?(Proc) ? @label.pipe : @label # rubocop:disable Style/NestedTernaryOperator
 
           field_body = html -> {
-            <<-HTML
-              <#{button_tag}#{attrs -> { @attributes }}>#{text -> { label_text }}</#{button_tag}>
+            <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
+              <#{button_tag}#{html_attributes @attributes, prefix_space: true}>#{text -> { label_text }}</#{button_tag}>
             HTML
           }
 
           return field_body unless wrapper_tag
 
           html -> {
-            <<-HTML
-              <#{wrapper_tag}#{attrs -> { { name: @attributes[:name] } }}>#{field_body}</#{wrapper_tag}>
+            <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
+              <#{wrapper_tag}#{html_attributes({ name: @attributes[:name] }, prefix_space: true)}>#{field_body}</#{wrapper_tag}>
             HTML
           }
         end

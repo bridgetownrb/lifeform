@@ -6,7 +6,7 @@ module Lifeform
   FieldDefinition = Struct.new(:type, :library, :parameters)
 
   # A form object which stores field definitions and can be rendered as a component
-  class Form # rubocop:todo Metrics/ClassLength
+  class Form
     include Lifeform::Renderable
     extend Sequel::Inflections
 
@@ -27,7 +27,7 @@ module Lifeform
       # @return [Hash<Symbol, FieldDefinition>]
       def fields(&block)
         @fields ||= {}
-        @fields_setup_block = block if block_given?
+        @fields_setup_block = block if block
 
         @fields
       end
@@ -144,19 +144,19 @@ module Lifeform
 
       @method_tag = -> {
         <<~HTML
-          <input type="hidden" name="_method" #{attribute_segment :value, method_value} autocomplete="off">
+          <input type="hidden" name="_method" value="#{text -> { method_value }}" autocomplete="off">
         HTML
       }
 
       parameters[:method] = :post
     end
 
-    def add_authenticity_token # rubocop:disable Metrics/AbcSize
+    def add_authenticity_token
       if helpers.respond_to?(:token_tag, true) # Rails
         helpers.send(:token_tag, nil, form_options: {
-                       action: parameters[:action].to_s,
-                       method: parameters[:method].to_s.downcase
-                     })
+          action: parameters[:action].to_s,
+          method: parameters[:method].to_s.downcase,
+        })
       elsif helpers.respond_to?(:csrf_tag, true) # Roda
         helpers.send(:csrf_tag, parameters[:action].to_s, @method.to_s)
       else
@@ -191,9 +191,9 @@ module Lifeform
       parameters[:action] ||= url || (model ? helpers.send(self.class.const_get(:MODEL_PATH_HELPER), model) : nil)
 
       html -> {
-        <<~HTML
-          <#{form_tag}#{attrs -> { attributes }}>
-            #{add_authenticity_token unless parameters[:method].to_s.downcase == "get"}
+        <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
+          <#{form_tag} #{html_attributes attributes}>
+            #{add_authenticity_token unless parameters[:method].to_s.casecmp("get").zero?}
             #{@method_tag&.() || ""}
             #{block ? capture(self, &block) : auto_render_fields}
           </#{form_tag}>

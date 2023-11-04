@@ -40,7 +40,7 @@ module Lifeform
 
         def value_for_model = @model.send(attributes[:name])
 
-        def handle_labels # rubocop:disable Metrics/AbcSize
+        def handle_labels
           label_text = attributes[:label].is_a?(Proc) ? attributes[:label].pipe : attributes[:label]
           label_name = (attributes[:id] || attributes[:name]).to_s
 
@@ -48,7 +48,7 @@ module Lifeform
 
           -> {
             <<~HTML
-              <label #{attribute_segment :for, label_name}>#{text -> { label_text }}</label>
+              <label for="#{text -> { label_name }}">#{text -> { label_text }}</label>
             HTML
           }
         end
@@ -61,9 +61,11 @@ module Lifeform
           closing_tag = input_tag != "input"
 
           field_body = html -> {
-            <<~HTML
+            <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
               #{html(@label || -> {}).to_s.strip}
-              <#{input_tag}#{attrs -> { { type: @field_type.to_s, **@attributes } }}>#{"</#{input_tag}>" if closing_tag}
+              <#{input_tag}#{html_attributes({ type: @field_type.to_s, **@attributes }, prefix_space: true)}>#{
+                "</#{input_tag}>" if closing_tag
+              }
               #{html -> { capture(self, &block) } if block}
             HTML
           }
@@ -71,8 +73,8 @@ module Lifeform
           return field_body unless wrapper_tag
 
           html -> {
-            <<~HTML
-              <#{wrapper_tag}#{attrs -> { { name: @attributes[:name] } }}>#{field_body.to_s.strip}</#{wrapper_tag}>
+            <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
+              <#{wrapper_tag}#{html_attributes({ name: @attributes[:name] }, prefix_space: true)}>#{field_body.to_s.strip}</#{wrapper_tag}>
             HTML
           }
         end
