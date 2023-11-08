@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require "serbea/helpers" # primarily just for HTML safety polyfill
-require "serbea/pipeline"
+require "streamlined"
 require "zeitwerk"
 loader = Zeitwerk::Loader.for_gem
 loader.setup

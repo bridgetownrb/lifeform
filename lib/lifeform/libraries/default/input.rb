@@ -4,7 +4,7 @@ module Lifeform
   module Libraries
     class Default
       class Input
-        include Lifeform::Renderable
+        include Streamlined::Renderable
 
         attr_reader :form, :field_definition, :attributes
 
@@ -46,10 +46,9 @@ module Lifeform
 
           @attributes = attributes.filter_map { |k, v| [k, v] unless k == :label }.to_h
 
-          -> {
-            <<~HTML
-              <label for="#{text -> { label_name }}">#{text -> { label_text }}</label>
-            HTML
+          -> { <<~HTML
+            <label for="#{text -> { label_name }}">#{text -> { label_text }}</label>
+          HTML
           }
         end
 
@@ -60,22 +59,20 @@ module Lifeform
           input_tag = dashed self.class.const_get(:INPUT_TAG)
           closing_tag = input_tag != "input"
 
-          field_body = html -> {
-            <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
-              #{html(@label || -> {}).to_s.strip}
-              <#{input_tag} #{html_attributes type: @field_type.to_s, **@attributes}>#{
-                "</#{input_tag}>" if closing_tag
-              }
-              #{html -> { capture(self, &block) } if block}
-            HTML
+          field_body = html -> { <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
+            #{html(@label || -> {}).to_s.strip}
+            <#{input_tag} #{html_attributes type: @field_type.to_s, **@attributes}>#{
+              "</#{input_tag}>" if closing_tag
+            }
+            #{html -> { capture(self, &block) } if block}
+          HTML
           }
 
           return field_body unless wrapper_tag
 
-          html -> {
-            <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
-              <#{wrapper_tag} #{html_attributes name: @attributes[:name]}>#{field_body.to_s.strip}</#{wrapper_tag}>
-            HTML
+          html -> { <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
+            <#{wrapper_tag} #{html_attributes name: @attributes[:name]}>#{field_body.to_s.strip}</#{wrapper_tag}>
+          HTML
           }
         end
       end

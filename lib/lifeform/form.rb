@@ -9,7 +9,7 @@ module Lifeform
 
   # A form object which stores field definitions and can be rendered as a component
   class Form
-    include Lifeform::Renderable
+    include Streamlined::Renderable
     extend Sequel::Inflections
 
     MODEL_PATH_HELPER = :polymorphic_path
@@ -192,14 +192,13 @@ module Lifeform
       form_tag = library::FORM_TAG
       parameters[:action] ||= url || (model ? helpers.send(self.class.const_get(:MODEL_PATH_HELPER), model) : nil)
 
-      html -> {
-        <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
-          <#{form_tag} #{html_attributes attributes}>
-            #{add_authenticity_token unless parameters[:method].to_s.casecmp("get").zero?}
-            #{@method_tag&.() || ""}
-            #{block ? capture(self, &block) : auto_render_fields}
-          </#{form_tag}>
-        HTML
+      html -> { <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
+        <#{form_tag} #{html_attributes attributes}>
+          #{add_authenticity_token unless parameters[:method].to_s.casecmp("get").zero?}
+          #{@method_tag&.() || ""}
+          #{block ? capture(self, &block) : auto_render_fields}
+        </#{form_tag}>
+      HTML
       }
     end
 

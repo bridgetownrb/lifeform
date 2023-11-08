@@ -5,8 +5,6 @@ module Lifeform
     class Shoelace
       class Button < Default::Button
         BUTTON_TAG = :sl_button
-
-        register_element BUTTON_TAG
       end
     end
   end

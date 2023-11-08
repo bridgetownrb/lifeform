@@ -4,7 +4,7 @@ module Lifeform
   module Libraries
     class Default
       class Button
-        include Lifeform::Renderable
+        include Streamlined::Renderable
 
         attr_reader :form, :field_definition, :attributes
 
@@ -28,18 +28,16 @@ module Lifeform
 
           label_text = block ? capture(self, &block) : @label.is_a?(Proc) ? @label.pipe : @label # rubocop:disable Style/NestedTernaryOperator
 
-          field_body = html -> {
-            <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
-              <#{button_tag}#{html_attributes @attributes, prefix_space: true}>#{text -> { label_text }}</#{button_tag}>
-            HTML
+          field_body = html -> { <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
+            <#{button_tag}#{html_attributes @attributes, prefix_space: true}>#{text -> { label_text }}</#{button_tag}>
+          HTML
           }
 
           return field_body unless wrapper_tag
 
-          html -> {
-            <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
-              <#{wrapper_tag} #{html_attributes name: @attributes[:name]}>#{field_body}</#{wrapper_tag}>
-            HTML
+          html -> { <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
+            <#{wrapper_tag} #{html_attributes name: @attributes[:name]}>#{field_body}</#{wrapper_tag}>
+          HTML
           }
         end
       end

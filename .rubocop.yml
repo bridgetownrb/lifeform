@@ -25,8 +25,8 @@ AllCops:
     - test/fixtures/**/*
     - vendor/**/*
 
-# Lint/MissingSuper:
-#   Enabled: false
+Layout/MultilineBlockLayout:
+  Enabled: false
 
 Metrics/AbcSize:
   Exclude:
@@ -39,29 +39,6 @@ Metrics/ClassLength:
 Metrics/MethodLength:
   Exclude:
   - test/**/*.rb
-
-# Style/Documentation:
-#   Enabled: false
-
-# Style/Lambda:
-#   Enabled: false
-
-# Style/LambdaCall:
-#   Enabled: false
-
-# Style/MultilineBlockChain:
-#   Enabled: false
-
-# Style/StringLiterals:
-#   Enabled: true
-#   EnforcedStyle: double_quotes
-
-# Style/StringLiteralsInInterpolation:
-#   Enabled: true
-#   EnforcedStyle: double_quotes
-
-# Style/ParallelAssignment:
-#   Enabled: false
 
 Layout/LineLength:
   Max: 120

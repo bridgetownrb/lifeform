@@ -1,10 +1,10 @@
 PATH
   remote: .
   specs:
-    lifeform (0.11.0)
+    lifeform (0.12.0)
       hash_with_dot_access (>= 1.2)
       sequel (>= 5.72)
-      serbea (>= 2.1)
+      streamlined (>= 0.2.0)
       zeitwerk (~> 2.5)
 
 GEM
@@ -116,6 +116,9 @@ GEM
       thor (~> 1.0)
       tilt (~> 2.0)
       yard (~> 0.9, >= 0.9.24)
+    streamlined (0.2.0)
+      serbea (>= 2.1)
+      zeitwerk (~> 2.5)
     thor (1.3.0)
     tilt (2.3.0)
     tzinfo (2.0.6)
