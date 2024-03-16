@@ -55,7 +55,6 @@ module Lifeform
         def template(&block) # rubocop:disable Metrics/AbcSize
           return "" if !@if.nil? && !@if
 
-          wrapper_tag = dashed self.class.const_get(:WRAPPER_TAG)
           input_tag = dashed self.class.const_get(:INPUT_TAG)
           closing_tag = input_tag != "input"
 
@@ -68,8 +67,9 @@ module Lifeform
           HTML
           }
 
-          return field_body unless wrapper_tag
+          return field_body unless self.class.const_get(:WRAPPER_TAG)
 
+          wrapper_tag = dashed self.class.const_get(:WRAPPER_TAG)
           html -> { <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
             <#{wrapper_tag} #{html_attributes name: @attributes[:name]}>#{field_body.to_s.strip}</#{wrapper_tag}>
           HTML

@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## [0.14.0] - 2024-03-15
+
+- Fix rendering bug when wrapper tags were set to nil
+
+## [0.12.0] - 2023-11-07
+
+- Use new Streamlined gem for renderable features
+  - Refactor to remove Phlex
+
 ## [0.11.0] - 2023-06-22
 
 - Upgrade to Phlex 1.7+, Ruby 3.0+

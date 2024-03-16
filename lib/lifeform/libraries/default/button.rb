@@ -23,9 +23,7 @@ module Lifeform
         def template(&block)
           return "" if !@if.nil? && !@if
 
-          wrapper_tag = dashed self.class.const_get(:WRAPPER_TAG)
           button_tag = dashed self.class.const_get(:BUTTON_TAG)
-
           label_text = block ? capture(self, &block) : @label.is_a?(Proc) ? @label.pipe : @label # rubocop:disable Style/NestedTernaryOperator
 
           field_body = html -> { <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
@@ -33,8 +31,9 @@ module Lifeform
           HTML
           }
 
-          return field_body unless wrapper_tag
+          return field_body unless self.class.const_get(:WRAPPER_TAG)
 
+          wrapper_tag = dashed self.class.const_get(:WRAPPER_TAG)
           html -> { <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
             <#{wrapper_tag} #{html_attributes name: @attributes[:name]}>#{field_body}</#{wrapper_tag}>
           HTML
