@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    lifeform (0.13.0)
+    lifeform (0.14.0)
       hash_with_dot_access (>= 1.2)
       sequel (>= 5.72)
       streamlined (>= 0.2.0)
