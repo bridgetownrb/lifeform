@@ -10,9 +10,9 @@ module Lifeform
 end
 
 if defined?(Bridgetown)
-  # Check compatibility
-  raise "The Lifeform support for Bridgetown requires v1.2 or newer" if Bridgetown::VERSION.to_f < 1.2
-
-  Bridgetown.initializer :lifeform do # |config|
+  Bridgetown.initializer :lifeform do |config|
+    config.hook :authtown, :initialized do |rodauth|
+      Lifeform::Form.rodauth = rodauth
+    end
   end
 end

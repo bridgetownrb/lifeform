@@ -23,6 +23,11 @@ module Lifeform
       # Helper to point to `I18n.t` method
       def t(...) = I18n.t(...)
 
+      # Support integration with Rodauth for sign in/sign up forms
+      attr_writer :rodauth
+
+      def rodauth = Form.instance_variable_get(:@rodauth)
+
       def configuration = @configuration ||= HashWithDotAccess::Hash.new
 
       # @param block [Proc, nil]
