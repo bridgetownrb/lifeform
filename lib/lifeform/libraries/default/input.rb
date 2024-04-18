@@ -41,13 +41,13 @@ module Lifeform
         def value_for_model = @model.send(attributes[:name])
 
         def handle_labels
-          label_text = attributes[:label].is_a?(Proc) ? attributes[:label].pipe : attributes[:label]
+          label_text = attributes[:label]
           label_name = (attributes[:id] || attributes[:name]).to_s
 
           @attributes = attributes.filter_map { |k, v| [k, v] unless k == :label }.to_h
 
           -> { <<~HTML
-            <label for="#{text -> { label_name }}">#{text -> { label_text }}</label>
+            <label for="#{text -> { label_name }}">#{text label_text}</label>
           HTML
           }
         end
@@ -58,7 +58,7 @@ module Lifeform
           input_tag = dashed self.class.const_get(:INPUT_TAG)
           closing_tag = input_tag != "input"
 
-          field_body = html -> { <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
+          field_body = html -> { <<~HTML # rubocop:disable Bridgetown/InsecureHeredoc
             #{html(@label || -> {}).to_s.strip}
             <#{input_tag} #{html_attributes type: @field_type.to_s, **@attributes}>#{
               "</#{input_tag}>" if closing_tag
@@ -70,7 +70,7 @@ module Lifeform
           return field_body unless self.class.const_get(:WRAPPER_TAG)
 
           wrapper_tag = dashed self.class.const_get(:WRAPPER_TAG)
-          html -> { <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
+          html -> { <<~HTML # rubocop:disable Bridgetown/InsecureHeredoc
             <#{wrapper_tag} #{html_attributes name: @attributes[:name]}>#{field_body.to_s.strip}</#{wrapper_tag}>
           HTML
           }

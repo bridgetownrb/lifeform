@@ -24,17 +24,17 @@ module Lifeform
           return "" if !@if.nil? && !@if
 
           button_tag = dashed self.class.const_get(:BUTTON_TAG)
-          label_text = block ? capture(self, &block) : @label.is_a?(Proc) ? @label.pipe : @label # rubocop:disable Style/NestedTernaryOperator
+          label_text = block ? capture(self, &block) : @label
 
-          field_body = html -> { <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
-            <#{button_tag}#{html_attributes @attributes, prefix_space: true}>#{text -> { label_text }}</#{button_tag}>
+          field_body = html -> { <<~HTML # rubocop:disable Bridgetown/InsecureHeredoc
+            <#{button_tag}#{html_attributes @attributes, prefix_space: true}>#{text label_text}</#{button_tag}>
           HTML
           }
 
           return field_body unless self.class.const_get(:WRAPPER_TAG)
 
           wrapper_tag = dashed self.class.const_get(:WRAPPER_TAG)
-          html -> { <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
+          html -> { <<~HTML # rubocop:disable Bridgetown/InsecureHeredoc
             <#{wrapper_tag} #{html_attributes name: @attributes[:name]}>#{field_body}</#{wrapper_tag}>
           HTML
           }

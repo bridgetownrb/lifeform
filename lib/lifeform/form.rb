@@ -197,7 +197,7 @@ module Lifeform
       form_tag = library::FORM_TAG
       parameters[:action] ||= url || (model ? helpers.send(self.class.const_get(:MODEL_PATH_HELPER), model) : nil)
 
-      html -> { <<~HTML # rubocop:disable Bridgetown/HTMLEscapedHeredoc
+      html -> { <<~HTML # rubocop:disable Bridgetown/InsecureHeredoc
         <#{form_tag} #{html_attributes attributes}>
           #{add_authenticity_token unless parameters[:method].to_s.casecmp("get").zero?}
           #{@method_tag&.() || ""}

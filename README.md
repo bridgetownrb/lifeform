@@ -1,6 +1,6 @@
 # Lifeform
 
-Component-centric form object rendering for Ruby. Rails and Bridgetown both supported.
+Component-centric form object rendering for Ruby. Bridgetown, Roda, and Rails all supported.
 
 ## Installation
 

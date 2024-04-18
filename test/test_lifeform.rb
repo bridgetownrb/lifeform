@@ -21,7 +21,7 @@ TestForm.configuration.occupation_key = :occupation
 
 class TestAutolayout < Lifeform::Form
   field :first_name, label: "<b>First Name</b>".html_safe, required: true
-  field :last_name, label: -> { "Last Name" }, goof: "<em>Wow</em>"
+  field :last_name, label: -> { "Last Name".html_safe }, goof: "<em>Wow</em>"
   field :age, library: :shoelace, label: "Your Age"
 
   field :submit, type: :submit_button, label: "<i>Save</i>".html_safe, class: "font-bold"
